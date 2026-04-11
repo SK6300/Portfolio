@@ -285,35 +285,41 @@ weighted avg       0.97      0.97      0.97      1126</pre>
                                 <div class="vscode-tab"><i class="fab fa-python" style="color: #3776ab;"></i> churn_guard.py</div>
                             </div>
                             <div class="vscode-content">
-<pre><code><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<pre><code><span class="comment"># ==========================================</span>
+<span class="comment"># CHURN-GUARD: E-commerce Churn Prediction</span>
+<span class="comment"># Goal: Predict customer churn using Random Forest</span>
+<span class="comment"># ==========================================</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
 <span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
 <span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder
 <span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
 <span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
 <span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score
 
-<span class="comment"># 1. Load E-commerce Dataset</span>
+<span class="comment"># Step 1: Ingest dataset into Pandas DataFrame</span>
 df = pd.<span class="function">read_excel</span>(<span class="string">'E Commerce Dataset.xlsx'</span>, sheet_name=<span class="string">'E Comm'</span>)
 
-<span class="comment"># 2. Handle Missing Values (Median Imputation)</span>
+<span class="comment"># Step 2: Smart Data Imputation</span>
+<span class="comment"># Fill missing numerical values with the median to avoid outlier skew</span>
 df = df.<span class="function">fillna</span>(df.<span class="function">median</span>(numeric_only=<span class="keyword">True</span>))
 
-<span class="comment"># 3. Categorical Encoding</span>
+<span class="comment"># Step 3: Feature Encoding</span>
+<span class="comment"># ML models require numbers, so we convert text categories (e.g., Gender) to integers</span>
 le = <span class="function">LabelEncoder</span>()
 text_cols = df.<span class="function">select_dtypes</span>(include=[<span class="string">'object'</span>]).columns
 <span class="keyword">for</span> col <span class="keyword">in</span> text_cols:
     df[col] = le.<span class="function">fit_transform</span>(df[col])
 
-<span class="comment"># 4. Define Features and Target</span>
+<span class="comment"># Step 4: Isolate target variable ('Churn') and split data (80% train, 20% test)</span>
 X = df.<span class="function">drop</span>(<span class="string">'Churn'</span>, axis=1)
 y = df[<span class="string">'Churn'</span>]
 X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=0.2, random_state=42)
 
-<span class="comment"># 5. Train Random Forest Classifier</span>
+<span class="comment"># Step 5: Initialize and train the Random Forest Ensemble Model</span>
 model = <span class="function">RandomForestClassifier</span>(n_estimators=100, random_state=42)
 model.<span class="function">fit</span>(X_train, y_train)
 
-<span class="comment"># 6. Evaluation</span>
+<span class="comment"># Step 6: Validate model accuracy against unseen test data</span>
 y_pred = model.<span class="function">predict</span>(X_test)
 <span class="function">print</span>(<span class="string">f"Accuracy Score: {accuracy_score(y_test, y_pred):.4f}"</span>) 
 <span class="comment"># Output: Accuracy Score: 0.9715</span>
@@ -335,7 +341,7 @@ y_pred = model.<span class="function">predict</span>(X_test)
                     <div class="view-section preview active">
                         <p class="description">Interact with my featured 3D model directly in your browser. Drag to rotate, scroll to zoom.</p>
                         <div id="showcase-container">
-                            <model-viewer src="Blender_project.glb" auto-rotate camera-controls shadow-intensity="1" style="width: 100%; height: 100%; background-color: transparent;"></model-viewer>
+                            <model-viewer src="Blender_project.glb" auto-rotate camera-controls shadow-intensity="1" camera-orbit="90deg 75deg auto" orientation="10deg -1deg 0deg" style="width: 100%; height: 100%; background-color: transparent;"></model-viewer>
                             <a href="Blender_project.glb" download class="download-float-btn">
                                 <i class="fas fa-download"></i> Download Project
                             </a>
@@ -349,10 +355,17 @@ y_pred = model.<span class="function">predict</span>(X_test)
                                 <div class="vscode-tab"><i class="fab fa-html5" style="color: #e34c26;"></i> model_viewer.html</div>
                             </div>
                             <div class="vscode-content">
-<pre><code><span class="comment">&lt;!-- Google Model Viewer Implementation --&gt;</span>
+<pre><code><span class="comment">&lt;!-- </span>
+<span class="comment">  ==========================================</span>
+<span class="comment">  3D WEB VIEWER INTEGRATION</span>
+<span class="comment">  Using Google's &lt;model-viewer&gt; web component</span>
+<span class="comment">  for native, interactive 3D rendering.</span>
+<span class="comment">  ========================================== </span>
+<span class="comment">--&gt;</span>
 <span class="keyword">&lt;script</span> type=<span class="string">"module"</span> src=<span class="string">"https://ajax.googleapis.com/.../model-viewer.min.js"</span><span class="keyword">&gt;&lt;/script&gt;</span>
 
 <span class="keyword">&lt;style&gt;</span>
+  <span class="comment">/* Make the canvas responsive and transparent to blend with UI */</span>
   model-viewer {
     width: <span class="string">100%</span>;
     height: <span class="string">350px</span>;
@@ -361,7 +374,12 @@ y_pred = model.<span class="function">predict</span>(X_test)
   }
 <span class="keyword">&lt;/style&gt;</span>
 
-<span class="comment">&lt;!-- Embedded 3D Object with Controls --&gt;</span>
+<span class="comment">&lt;!-- </span>
+<span class="comment">  Core viewer tag with smart attributes:</span>
+<span class="comment">  - auto-rotate: Spins model automatically.</span>
+<span class="comment">  - camera-controls: Enables mouse/touch dragging.</span>
+<span class="comment">  - shadow-intensity: Adds realistic grounding shadows. </span>
+<span class="comment">--&gt;</span>
 <span class="keyword">&lt;model-viewer</span> 
   src=<span class="string">"assets/Blender_project.glb"</span> 
   alt=<span class="string">"A 3D model of my project"</span>
@@ -398,18 +416,24 @@ y_pred = model.<span class="function">predict</span>(X_test)
                                 <div class="vscode-tab"><i class="fab fa-js" style="color: #f7df1e;"></i> particle_logic.js</div>
                             </div>
                             <div class="vscode-content">
-<pre><code><span class="comment">// --- Core 3D Morphing Logic Snippet ---</span>
+<pre><code><span class="comment">// ==========================================</span>
+<span class="comment">// 3D PARTICLE MORPHING ALGORITHM</span>
+<span class="comment">// Re-arranges thousands of particles into a loaded 3D shape</span>
+<span class="comment">// ==========================================</span>
 <span class="keyword">function</span> <span class="function">processLoadedModel</span>(object) {
-    <span class="comment">// Scale & Center Object</span>
+    <span class="comment">// Step 1: Calculate Bounding Box to dynamically scale any uploaded object</span>
     <span class="keyword">const</span> box = <span class="keyword">new</span> THREE.Box3().setFromObject(object);
     <span class="keyword">const</span> center = box.getCenter(<span class="keyword">new</span> THREE.Vector3());
     <span class="keyword">const</span> size = box.getSize(<span class="keyword">new</span> THREE.Vector3());
+    
+    <span class="comment">// Normalize scale so it fits within the particle sphere's radius</span>
     <span class="keyword">const</span> scale = (radius * <span class="string">5</span>) / Math.max(size.x, size.y, size.z); 
 
     object.position.sub(center).multiplyScalar(scale);
     object.scale.set(scale, scale, scale);
 
-    <span class="comment">// Extract vertices for particles</span>
+    <span class="comment">// Step 2: Extract World-Space Vertices</span>
+    <span class="comment">// We loop through the object's geometry to find target coordinates for our particles</span>
     <span class="keyword">let</span> extractedVertices = [];
     object.traverse((child) =&gt; {
         <span class="keyword">if</span> (child.isMesh) {
@@ -417,13 +441,14 @@ y_pred = model.<span class="function">predict</span>(X_test)
             <span class="keyword">let</span> local = <span class="keyword">new</span> THREE.Vector3();
             <span class="keyword">for</span> (<span class="keyword">let</span> i = 0; i &lt; posAttr.count; i++) {
                 local.fromBufferAttribute(posAttr, i);
+                <span class="comment">// Apply matrix to convert local vertex to global 3D space</span>
                 local.applyMatrix4(child.matrixWorld); 
                 extractedVertices.push(local.clone());
             }
         }
     });
 
-    <span class="comment">// Trigger Morph sequence globally</span>
+    <span class="comment">// Step 3: Trigger the Morph Animation Loop globally</span>
     currentMode = <span class="string">'MORPH_TO_OBJ'</span>;
     particles.visible = <span class="keyword">true</span>;
 }
@@ -468,7 +493,11 @@ y_pred = model.<span class="function">predict</span>(X_test)
                                 <div class="vscode-tab"><i class="fab fa-java" style="color: #b07219;"></i> MainActivity.java</div>
                             </div>
                             <div class="vscode-content">
-<pre><code><span class="keyword">package</span> com.shiva.tara;
+<pre><code><span class="comment">// ==========================================</span>
+<span class="comment">// TARA AI - VOICE ASSISTANT DASHBOARD</span>
+<span class="comment">// Core Android Activity handling user voice triggers</span>
+<span class="comment">// ==========================================</span>
+<span class="keyword">package</span> com.shiva.tara;
 
 <span class="keyword">import</span> android.os.Bundle;
 <span class="keyword">import</span> android.widget.ToggleButton;
@@ -483,14 +512,17 @@ y_pred = model.<span class="function">predict</span>(X_test)
         <span class="keyword">super</span>.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        <span class="comment">// Initialize TaRa AI Voice Toggle</span>
+        <span class="comment">// Link the UI toggle button to our Java backend</span>
         aiListenToggle = findViewById(R.id.toggleListen);
         
+        <span class="comment">// Set up an asynchronous listener for toggle state changes</span>
         aiListenToggle.setOnCheckedChangeListener((buttonView, isChecked) -&gt; {
             <span class="keyword">if</span> (isChecked) {
+                <span class="comment">// User activated mic: Trigger Android SpeechRecognizer</span>
                 <span class="function">startListening</span>();
-                <span class="comment">// Trigger UI Animation</span>
+                <span class="comment">// TODO: Trigger dynamic pulse animation on the UI</span>
             } <span class="keyword">else</span> {
+                <span class="comment">// User deactivated mic: Kill listening thread</span>
                 <span class="function">stopListening</span>();
             }
         });
@@ -527,26 +559,36 @@ y_pred = model.<span class="function">predict</span>(X_test)
                                 <div class="vscode-tab"><i class="fab fa-python" style="color: #3776ab;"></i> image_batch.py</div>
                             </div>
                             <div class="vscode-content">
-<pre><code><span class="comment"># Automated Image Processing (Alternative to Photoshop Actions)</span>
+<pre><code><span class="comment"># ==========================================</span>
+<span class="comment"># AUTOMATED VISUAL BATCH PROCESSOR</span>
+<span class="comment"># Replaces repetitive Photoshop actions using Python's PIL</span>
+<span class="comment"># ==========================================</span>
 <span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageEnhance
 <span class="keyword">import</span> os
 
 <span class="keyword">def</span> <span class="function">batch_process_images</span>(folder_path):
+    <span class="comment"># Iterate through all files in the target directory</span>
     <span class="keyword">for</span> filename <span class="keyword">in</span> os.listdir(folder_path):
         <span class="keyword">if</span> filename.endswith(<span class="string">".jpg"</span>):
             img_path = os.path.join(folder_path, filename)
+            
+            <span class="comment"># Load image into memory</span>
             img = Image.<span class="function">open</span>(img_path)
             
-            <span class="comment"># Apply custom color grading filters</span>
+            <span class="comment"># 1st Pass: Color Grading</span>
+            <span class="comment"># Increase saturation by 50% for a vivid look</span>
             enhancer = ImageEnhance.Color(img)
-            img_colored = enhancer.<span class="function">enhance</span>(1.5) <span class="comment"># Boost saturation</span>
+            img_colored = enhancer.<span class="function">enhance</span>(1.5) 
             
+            <span class="comment"># 2nd Pass: Contrast Adjustment</span>
+            <span class="comment"># Boost contrast by 20% to make shadows pop</span>
             contrast = ImageEnhance.Contrast(img_colored)
             img_final = contrast.<span class="function">enhance</span>(1.2)
             
-            <span class="comment"># Save output</span>
+            <span class="comment"># Save the processed image with a new prefix</span>
             img_final.<span class="function">save</span>(<span class="string">f"edited_{filename}"</span>)
 
+<span class="comment"># Execute script on the raw photos directory</span>
 <span class="function">batch_process_images</span>(<span class="string">'./raw_photos'</span>)
 </code></pre>
                             </div>
