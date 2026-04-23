@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive SPV & 3D Morph Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+    body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .info {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        z-index: 10;
+        pointer-events: none;
+        background-color: transparent;
+    }
+
+    .bottom-control-buttons {
+        position: absolute;
+        bottom: 60px;
+        left: 20px;
+        display: flex;
+        justify-content: flex-start;
+        gap: 15px;
+        z-index: 100;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+
+    .control-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        pointer-events: auto;
+        color: white;
+        font-size: 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .control-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #micButton {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    #micButton:hover {
+        background-color: rgba(255, 255, 255, 0.4);
+        border-color: rgba(255, 255, 255, 0.7);
+    }
+    #micButton.mic-off svg {
+        fill: rgba(255, 255, 255, 0.5);
+    }
+    #micButton.mic-off::before {
+        content: '/';
+        position: absolute;
+        font-size: 30px;
+        color: rgba(255, 255, 255, 0.5);
+        transform: rotate(-45deg);
+        line-height: 1;
+        z-index: 1;
+    }
+    #micButton svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+        transition: fill 0.3s ease;
+    }
+
+    .top-right-buttons {
+        position: fixed;
+        top: 40px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .top-right-button {
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+     .top-right-button:hover {
+        background-color: rgba(255, 255, 255, 0.4);
+        border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    #pageActionBtn { display: flex; }
+    #globalCloseButton { display: none; }
+
+    #pageOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Changed to relative units for initial scale */
+    width: 60vw; 
+    height: 60vh;
+    max-width: 90%;
+    max-height: 90%;
+    min-width: 250px;
+    min-height: 250px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    z-index: 90;
+    display: none;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* Changed from overflow-y to hidden to support resize handle */
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: stretch;
+    opacity: 1; 
+    /* Enable manual scaling */
+    resize: both; 
+}
+    #pageOverlay h2 {
+        color: white;
+        margin-top: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .page-content {
+        flex-grow: 1;
+        outline: none;
+        padding: 10px;
+        border-radius: 5px;
+        transition: border 0.3s ease;
+        overflow-y: auto;
+        min-height: 100px;
+    }
+    .page-content:focus {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+</style>
+</head>
+<body>
+    <div class="info">Drag to rotate the sphere. Click the mic to enable voice reactivity. Use top-right buttons to morph 3D models.</div>
+    <canvas id="sphereCanvas"></canvas>
+
+    <div class="top-right-buttons">
+        <div id="uploadBtn" class="top-right-button" title="Load 3D Object (Morph)">📁</div>
+        <div id="toggleSphereBtn" class="top-right-button" title="Return to SPV Sphere" style="display:none;">🌍</div>
+        <div id="pageActionBtn" class="top-right-button" title="Open Info Page">📄</div>
+        <div id="globalCloseButton" class="top-right-button" title="Close Info Page">❌</div>
+    </div>
+    
+    <input type="file" id="fileInput" accept=".glb, .gltf, .obj" style="display:none">
+
+    <div id="micButton" class="control-button mic-off" title="Enable Voice Control">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.64 6.44-6.17 6.95V20h-2v-3.05C6.34 17.44 3.7 14.53 3.7 11H2c0 3.98 3.15 7.17 7 7.73V22h6v-3.27c3.85-.56 7-3.75 7-7.73h-1.7z"/>
+        </svg>
+    </div>
+
+    <div class="bottom-control-buttons">
+        <div id="pauseButton" class="control-button" title="Pause Animation">❚❚</div>
+        <div id="runButton" class="control-button" title="Run Animation" style="display: none;">▶</div>
+    </div>
+
+    <div id="pageOverlay">
+        <div class="page-content" contenteditable="false">
+            <h2>About This Sphere</h2>
+            <p>This is an interactive particle sphere visualization. You can drag to rotate it using your mouse or touch.</p>
+            <p>Click the microphone button to enable voice reactivity. When enabled, the particles will react to the sound level detected by your microphone, causing a "volcanic" eruption effect and changing color.</p>
+            <p><strong>New Feature:</strong> Use the 📁 icon to load any .glb, .gltf, or .obj 3D model. The particles will smoothly morph into the object's shape before revealing it!</p>
+            <p>Use the Pause and Run buttons, or the top-right button to control animation and the info page.</p>
+            <p><strong>Drag this info panel to rotate it in 3D! It will slide a bit.</strong></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    
+    <script type="module">
+        // --- Scene Setup ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight,  0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('sphereCanvas'), antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Adding lights for the 3D Object 
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); 
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        dirLight.position.set(5, 5, 5);
+        scene.add(dirLight);
+
+        // --- Controls ---
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = true;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.3;
+
+        // --- Morph State Management ---
+        let currentMode = 'SPHERE'; // States: SPHERE, MORPH_TO_OBJ, OBJ, MORPH_TO_SPHERE
+        let savedSnapshot = null; // Stores exact particle map
+        let targetObjectVertices = [];
+        let loadedMeshGroup = null;
+
+        // --- Particle System ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 10000 * 5; 
+        const radius = 10;
+        const initialPositions = new Float32Array(particlesCount * 3);
+        const currentPositions = new Float32Array(particlesCount * 3);
+        const initialColors = new Float32Array(particlesCount * 3);
+        const currentColors = new Float32Array(particlesCount * 3);
+        const velocities = new Float32Array(particlesCount * 3);
+        const tempVec3 = new THREE.Vector3();
+        const tempColor = new THREE.Color();
+
+        for (let i = 0; i < particlesCount; i++) {
+            const i3 = i * 3;
+            const phi = Math.acos(-1 + (2 * Math.random()));
+            const theta = Math.sqrt(particlesCount * Math.PI) * phi; 
+            const x = radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.sin(phi) * Math.sin(theta);
+            const z = radius * Math.cos(phi);
+            initialPositions[i3] = x; initialPositions[i3 + 1] = y; initialPositions[i3 + 2] = z;
+            currentPositions[i3] = x; currentPositions[i3 + 1] = y; currentPositions[i3 + 2] = z;
+            const baseColor = new THREE.Color(0xffffff); 
+            initialColors[i3] = baseColor.r; initialColors[i3 + 1] = baseColor.g; initialColors[i3 + 2] = baseColor.b;
+            currentColors[i3] = baseColor.r; currentColors[i3 + 1] = baseColor.g; currentColors[i3 + 2] = baseColor.b;
+            velocities[i3] = (Math.random() - 0.5) * 0.1; 
+            velocities[i3 + 1] = (Math.random() - 0.5) * 0.1;
+            velocities[i3 + 2] = (Math.random() - 0.5) * 0.1;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(currentPositions, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(currentColors, 3));
+
+         // --- Audio Setup (Original exactly as is) ---
+        let audioContext, analyser, audioDataArray, soundDetected = false;
+        const bufferLength = 256; 
+        const disruptionFactor = 5; 
+        const sunColor = new THREE.Color(0xffa500); 
+        const whiteColor = new THREE.Color(0xffffff); 
+        let normalizedVolume = 0;
+
+        async function initAudio() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = bufferLength * 2; 
+                audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                const compressor = audioContext.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-24, audioContext.currentTime); 
+                compressor.knee.setValueAtTime(30, audioContext.currentTime);
+                compressor.ratio.setValueAtTime(12, audioContext.currentTime);
+                compressor.attack.setValueAtTime(0.003, audioContext.currentTime); 
+                compressor.release.setValueAtTime(0.25, audioContext.currentTime); 
+
+                source.connect(compressor); compressor.connect(analyser);
+                const infoDiv = document.querySelector('.info');
+                if (infoDiv) { infoDiv.textContent = 'Microphone connected. Click mic button to enable voice control.';}
+            } catch (err) {
+                const infoDiv = document.querySelector('.info');
+                if (infoDiv) { infoDiv.style.color = 'red'; infoDiv.textContent = 'Microphone access denied. Voice reactivity disabled.';}
+            }
+        }
+
+        // --- Binary Texture ---
+        function createBinaryTexture() {
+            const canvas = document.createElement('canvas');
+            const textureSize = 64; 
+            canvas.width = textureSize; canvas.height = textureSize;
+            const context = canvas.getContext('2d');
+            context.font = 'bold 19px "Press Start 2P"'; 
+            context.fillStyle = '#FFFFFF'; 
+            context.textAlign = 'center'; context.textBaseline = 'middle';
+            context.shadowColor = 'rgba(255, 255, 255, 0.9)';
+            context.shadowBlur = 20; 
+            const step = textureSize / 4; 
+            for (let y = 0; y < 4; y++) {
+                for (let x = 0; x < 4; x++) {
+                    const char = Math.random() > 0.5 ? '1' : '0';
+                    context.fillText(char, x * step + step / 2, y * step + step / 2);
+                }
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true; return texture;
+        }
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.0850, sizeAttenuation: true, transparent: true,
+            depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true,
+            map: createBinaryTexture() 
+        });
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        particles.position.y = 3; 
+        scene.add(particles);
+
+        // --- UI Elements and State ---
+        let isMicControlEnabled = false;
+        let isAnimationPaused = false;
+        let isPageEditing = false;
+        let savedPageContent = '';
+
+        const micButton = document.getElementById('micButton');
+        const pageOverlay = document.getElementById('pageOverlay');
+        const pauseButton = document.getElementById('pauseButton');
+        const runButton = document.getElementById('runButton');
+        const globalCloseButton = document.getElementById('globalCloseButton');
+        const pageActionBtn = document.getElementById('pageActionBtn');
+        const pageContentDiv = pageOverlay.querySelector('.page-content');
+        const infoDiv = document.querySelector('.info');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const toggleSphereBtn = document.getElementById('toggleSphereBtn');
+
+        // --- 3D Model Processing & Extraction Logic ---
+        function processLoadedModel(object) {
+            if (loadedMeshGroup) scene.remove(loadedMeshGroup);
+
+            // Scale & Center
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = (radius * 5) / maxDim; 
+
+            object.position.sub(center).multiplyScalar(scale);
+            object.scale.set(scale, scale, scale);
+            object.rotation.y= Math.PI/-1.7;
+
+            // Wrap the object to match particles' y-offset cleanly
+            const wrapper = new THREE.Group();
+            wrapper.add(object);
+            wrapper.position.y = 1; 
+            scene.add(wrapper);
+            loadedMeshGroup = wrapper;
+            loadedMeshGroup.updateMatrixWorld(true);
+
+            // Extract vertices in local space of particles
+            let extractedVertices = [];
+            wrapper.traverse((child) => {
+                if (child.isMesh) {
+                    let posAttribute = child.geometry.attributes.position;
+                    let local = new THREE.Vector3();
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        local.fromBufferAttribute(posAttribute, i);
+                        local.applyMatrix4(child.matrixWorld); 
+                        local.sub(particles.position); // Relative to particle system
+                        extractedVertices.push(local.clone());
+                    }
+                }
+            });
+
+            if (extractedVertices.length === 0) return;
+
+            targetObjectVertices = new Float32Array(particlesCount * 3);
+            for (let i = 0; i < particlesCount; i++) {
+                let randomVert = extractedVertices[Math.floor(Math.random() * extractedVertices.length)];
+                targetObjectVertices[i*3] = randomVert.x;
+                targetObjectVertices[i*3+1] = randomVert.y;
+                targetObjectVertices[i*3+2] = randomVert.z;
+            }
+
+            // Trigger Morph sequence
+            currentMode = 'MORPH_TO_OBJ';
+            wrapper.visible = false; 
+            particles.visible = true;
+
+            uploadBtn.style.display = 'none';
+            toggleSphereBtn.style.display = 'flex';
+        }
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            if (extension === 'glb' || extension === 'gltf') {
+                new THREE.GLTFLoader().load(url, (gltf) => processLoadedModel(gltf.scene));
+            } else if (extension === 'obj') {
+                new THREE.OBJLoader().load(url, (obj) => processLoadedModel(obj));
+            }
+            fileInput.value = ''; 
+        });
+
+        toggleSphereBtn.addEventListener('click', () => {
+        // Allows returning to sphere from either 3D Object or Data Snapshot
+        if (currentMode === 'OBJ' || currentMode === 'MORPH_TO_OBJ' || currentMode === 'SNAPSHOT' || currentMode === 'MORPH_TO_SNAPSHOT') {
+        particles.visible = true;
+        if (loadedMeshGroup) loadedMeshGroup.visible = false;
+        currentMode = 'MORPH_TO_SPHERE';
+        toggleSphereBtn.style.display = 'none';
+        uploadBtn.style.display = 'flex';
+        }
+     });
+
+        // --- Page Rotation with SLIDE EFFECT ---
+        let isPageDragging = false, previousPageMouseX = 0, previousPageMouseY = 0;
+        let pageRotateX = 0, pageRotateY = 0, pageVelocityX = 0, pageVelocityY = 0;
+        let isPageSliding = false;
+        const slideDampingFactor = 0.95, pageRotationSensitivity = 0.7;
+
+        function updatePageTransform() {
+            pageOverlay.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${pageRotateX}deg) rotateY(${pageRotateY}deg) scale(1)`;
+        }
+
+        function handlePageMouseDown(event) {
+            if (isPageEditing) return;
+            const rect = pageOverlay.getBoundingClientRect();
+            const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+            const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+             if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return;
+            if ((event.target === pageContentDiv && !pageContentDiv.isContentEditable) || event.target !== pageContentDiv) {
+                 isPageDragging = true; isPageSliding = false; pageVelocityX = 0; pageVelocityY = 0;
+                 pageOverlay.style.transition = 'none'; 
+                 previousPageMouseX = clientX; previousPageMouseY = clientY;
+                 pageOverlay.style.cursor = 'grabbing';
+                 if (event.touches) event.preventDefault(); 
+            }
+        }
+
+        function handlePageMouseMove(event) {
+            if (!isPageDragging || isPageEditing) return;
+            const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+            const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+            const deltaX = clientX - previousPageMouseX; const deltaY = clientY - previousPageMouseY;
+            pageRotateY += deltaX * pageRotationSensitivity; pageRotateX -= deltaY * pageRotationSensitivity; 
+            pageVelocityY = deltaX * pageRotationSensitivity; pageVelocityX = -deltaY * pageRotationSensitivity;
+            updatePageTransform(); 
+            previousPageMouseX = clientX; previousPageMouseY = clientY;
+            if (event.touches) event.preventDefault();
+        }
+
+        function handlePageMouseUp() {
+            if (isPageDragging) {
+                isPageDragging = false; pageOverlay.style.cursor = 'grab';
+                if (Math.abs(pageVelocityX) > 0.1 || Math.abs(pageVelocityY) > 0.1) {
+                    isPageSliding = true; 
+                } else {
+                    pageOverlay.style.transition = 'transform 0.3s ease-out';
+                }
+            }
+        }
+
+        function addPageRotationListeners() {
+            pageOverlay.addEventListener('mousedown', handlePageMouseDown);
+            window.addEventListener('mousemove', handlePageMouseMove);
+            window.addEventListener('mouseup', handlePageMouseUp);
+            pageOverlay.addEventListener('touchstart', handlePageMouseDown, { passive: false });
+            window.addEventListener('touchmove', handlePageMouseMove, { passive: false });
+            window.addEventListener('touchend', handlePageMouseUp);
+        }
+
+        function removePageRotationListeners() {
+            pageOverlay.removeEventListener('mousedown', handlePageMouseDown);
+            window.removeEventListener('mousemove', handlePageMouseMove);
+            window.removeEventListener('mouseup', handlePageMouseUp);
+            pageOverlay.removeEventListener('touchstart', handlePageMouseDown);
+            window.removeEventListener('touchmove', handlePageMouseMove);
+            window.removeEventListener('touchend', handlePageMouseUp);
+        }
+
+        function getSphereScreenCenterOffset() {
+            const sphereWorldPosition = new THREE.Vector3();
+            particles.getWorldPosition(sphereWorldPosition);
+            const projectedPosition = sphereWorldPosition.clone().project(camera);
+            const screenX = (projectedPosition.x * 0.5 + 0.5) * window.innerWidth;
+            const screenY = (-projectedPosition.y * 0.5 + 0.5) * window.innerHeight; 
+            return { x: screenX - window.innerWidth / 2, y: screenY - window.innerHeight / 2 };
+        }
+
+        // --- Event Listeners ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        micButton.addEventListener('click', () => {
+            if (!audioContext) return;
+            isMicControlEnabled = !isMicControlEnabled;
+            micButton.classList.toggle('mic-off', !isMicControlEnabled);
+        });
+
+        pageActionBtn.addEventListener('click', () => {
+            if (pageOverlay.style.display === 'flex') {
+                if (isPageEditing) {
+                    savedPageContent = pageContentDiv.innerHTML;
+                    closePageOverlay(); 
+                } else {
+                    isPageEditing = true; pageContentDiv.contentEditable = true; pageContentDiv.focus();
+                    pageActionBtn.innerHTML = '💾';
+                    pageOverlay.style.cursor = 'auto';
+                    removePageRotationListeners(); 
+                }
+            } else { openPageOverlay(); }
+        });
+
+        globalCloseButton.addEventListener('click', () => {
+             if (isPageEditing) pageContentDiv.innerHTML = savedPageContent; 
+             closePageOverlay();
+        });
+
+       function openPageOverlay() {
+    pageOverlay.style.display = 'flex'; globalCloseButton.style.display = 'flex';
+    isAnimationPaused = true; controls.autoRotate = false;
+    pauseButton.style.display = 'none'; runButton.style.display = 'none'; micButton.style.display = 'none';
+    pageRotateX = 0; pageRotateY = 0; isPageSliding = false; pageVelocityX = 0; pageVelocityY = 0;
+
+    // --- DATA MAPPING ---
+    const positionsAttribute = particlesGeometry.attributes.position;
+    const currentArray = positionsAttribute.array;
+    savedSnapshot = new Float32Array(currentArray.length);
+    savedSnapshot.set(currentArray); 
+    
+    // Sample view for UI
+    let sampleData = `[P0] X:${currentArray[0].toFixed(2)} Y:${currentArray[1].toFixed(2)} Z:${currentArray[2].toFixed(2)}<br>`;
+    sampleData += `[P1] X:${currentArray[3].toFixed(2)} Y:${currentArray[4].toFixed(2)} Z:${currentArray[5].toFixed(2)}<br>`;
+    sampleData += `... Total Points: ${particlesCount}`;
+
+   pageContentDiv.innerHTML = `
+        <h2>3D Structural Map</h2>
+        <p style="color:#00ffcc; font-size:12px;">Snapshot Secured!</p>
+        
+        <div style="background:#111; padding:10px; font-family:monospace; font-size:11px; color:#0f0; border-radius:5px; margin-bottom:15px; border: 1px solid #333; max-height:80px; overflow-y:auto;">
+            ${sampleData}
+        </div>
+        
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;">
+            <button id="copyDataBtn" style="padding:10px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                📋 Copy Current Coordinates
+            </button>
+            
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:11px; color:#aaa;">Paste Coordinates to Morph:</label>
+                <input type="text" id="morphInputBar" placeholder="Paste coordinate string here..." 
+                    style="width:100%; padding:10px; background:rgba(0,0,0,0.5); border:1px solid #555; color:white; border-radius:5px; box-sizing:border-box;">
+                <button id="triggerMorphBtn" style="padding:10px; background:#6f42c1; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                    🌀 Morph to Input
+                </button>
+            </div>
+
+            <button id="restoreSnapshotBtn" style="padding:10px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                ✨ Reconstruct Last Snapshot
+            </button>
+        </div>
+        <p id="copyStatus" style="font-size:10px; text-align:center; color:#aaa; margin:0;"></p>
+    `;
+
+    // --- COPY LOGIC ---
+    document.getElementById('copyDataBtn').addEventListener('click', () => {
+        // Converting the entire 150,000 float array to a string
+        const fullDataString = currentArray.toString(); 
+        navigator.clipboard.writeText(fullDataString).then(() => {
+            const status = document.getElementById('copyStatus');
+            status.innerText = "Full coordinates copied to clipboard!";
+            status.style.color = "#00ffcc";
+            setTimeout(() => { status.innerText = ""; }, 3000);
+        }).catch(err => {
+            console.error('Copy failed', err);
+        });
+    });
+// --- TEXT BAR MORPH LOGIC ---
+    document.getElementById('triggerMorphBtn').addEventListener('click', () => {
+        const inputData = document.getElementById('morphInputBar').value;
+        const status = document.getElementById('copyStatus');
+
+        if (!inputData) {
+            status.innerText = "Please paste data first!";
+            status.style.color = "#ff4444";
+            return;
+        }
+
+        try {
+            // Convert string back to an array of floats
+            const floatArray = new Float32Array(inputData.split(',').map(Number));
+
+            if (floatArray.length !== particlesCount * 3) {
+                status.innerText = `Error: Data length mismatch. Expected ${particlesCount * 3} values.`;
+                status.style.color = "#ff4444";
+                return;
+            }
+
+            // Set the injected data as our new "snapshot" target
+            savedSnapshot = floatArray;
+            currentMode = 'MORPH_TO_SNAPSHOT';
+            closePageOverlay();
+            
+        } catch (err) {
+            status.innerText = "Invalid data format!";
+            status.style.color = "#ff4444";
+        }
+    });
+
+    // (Remaining overlay animation code...)
+    const { x: sphereOffsetX, y: sphereOffsetY } = getSphereScreenCenterOffset();
+    pageOverlay.style.transition = 'none'; pageOverlay.style.opacity = '0';
+    pageOverlay.style.transform = `translate(calc(-50% + ${sphereOffsetX}px), calc(-50% + ${sphereOffsetY}px)) scale(0.05) perspective(1000px) rotateX(75deg) rotateY(0deg)`;
+    pageOverlay.offsetHeight;
+    pageOverlay.style.transition = 'transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease-out';
+    pageOverlay.style.opacity = '1';
+    pageOverlay.style.transform = `translate(-50%, -50%) scale(1) perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+    
+    function onOpenTransitionEnd(event) {
+        if (event.target === pageOverlay && event.propertyName === 'transform') {
+            pageOverlay.removeEventListener('transitionend', onOpenTransitionEnd);
+            pageOverlay.style.transition = 'transform 0.3s ease-out';
+            addPageRotationListeners(); pageOverlay.style.cursor = 'grab';
+        }
+    }
+    pageOverlay.addEventListener('transitionend', onOpenTransitionEnd);
+    pageActionBtn.innerHTML = '💾'; pageContentDiv.contentEditable = false; isPageEditing = false;
+}
+
+        function closePageOverlay() {
+            if (isPageEditing) { pageContentDiv.contentEditable = false; isPageEditing = false; }
+            removePageRotationListeners(); pageOverlay.style.cursor = 'default';
+            const { x: sphereOffsetX, y: sphereOffsetY } = getSphereScreenCenterOffset();
+            pageOverlay.style.transition = 'transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in 0.1s';
+            pageOverlay.style.opacity = '0';
+            pageOverlay.style.transform = `translate(calc(-50% + ${sphereOffsetX}px), calc(-50% + ${sphereOffsetY}px)) scale(0.05) perspective(1000px) rotateX(${pageRotateX + 60}deg) rotateY(${pageRotateY}deg)`;
+            function onCloseTransitionEnd(event) {
+                if (event.target === pageOverlay && event.propertyName === 'transform') {
+                    pageOverlay.removeEventListener('transitionend', onCloseTransitionEnd);
+                    pageOverlay.style.display = 'none'; globalCloseButton.style.display = 'none';
+                    isAnimationPaused = false; controls.autoRotate = true;
+                    pauseButton.style.display = 'flex'; runButton.style.display = 'none'; micButton.style.display = 'flex';
+                    pageActionBtn.innerHTML = '📄';
+                    pageOverlay.style.removeProperty('transition'); pageOverlay.style.opacity = '1'; 
+                    pageOverlay.style.transform = 'translate(-50%, -50%)'; 
+                    pageRotateX = 0; pageRotateY = 0; isPageSliding = false; pageVelocityX = 0; pageVelocityY = 0;
+                }
+            }
+            pageOverlay.addEventListener('transitionend', onCloseTransitionEnd);
+        }
+
+        pauseButton.addEventListener('click', () => {
+            isAnimationPaused = true; pauseButton.style.display = 'none'; runButton.style.display = 'flex';
+            controls.autoRotate = false;
+        });
+
+        runButton.addEventListener('click', () => {
+            isAnimationPaused = false; runButton.style.display = 'none'; pauseButton.style.display = 'flex';
+            controls.autoRotate = true;
+        });
+
+        // --- Core Animation Loop ---
+        const clock = new THREE.Clock();
+        const springFactor = 0.0015; const dampingFactor = 0.97; const noiseFactor = 0.003;
+        const returnLerpFactor = 0.04; const cloudOffsetAmount = 0.7;
+        const cloudMovementFactor = 0.008; const reconstructionSpeed = 0.04;
+
+        window.onload = function () {
+            isAnimationPaused = false;
+            pauseButton.style.display = 'flex'; runButton.style.display = 'none';
+            controls.autoRotate = true;
+            pageOverlay.style.transform = 'translate(-50%, -50%)';
+            initAudio();
+            savedPageContent = pageContentDiv.innerHTML;
+            globalCloseButton.style.display = 'none';
+            isPageEditing = false;
+            pageContentDiv.contentEditable = false;
+            pageActionBtn.innerHTML = '📄';
+            micButton.style.display = 'flex';
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const deltaTime = clock.getDelta();
+            const elapsedTime = clock.getElapsedTime();
+
+            if (isPageSliding && pageOverlay.style.display === 'flex' && !isPageEditing) {
+                pageRotateX += pageVelocityX; pageRotateY += pageVelocityY;
+                pageVelocityX *= slideDampingFactor; pageVelocityY *= slideDampingFactor;
+                pageOverlay.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${pageRotateX}deg) rotateY(${pageRotateY}deg) scale(1)`;
+                if (Math.abs(pageVelocityX) < 0.01 && Math.abs(pageVelocityY) < 0.01) {
+                    isPageSliding = false; pageVelocityX = 0; pageVelocityY = 0;
+                    pageOverlay.style.transition = 'transform 0.3s ease-out';
+                }
+            }
+
+            if (!isAnimationPaused) {
+                const positionsAttribute = particlesGeometry.attributes.position;
+                const positionsArray = positionsAttribute.array;
+                const colorsAttribute = particlesGeometry.attributes.color;
+                const colorsArray = colorsAttribute.array;
+
+                if (currentMode === 'MORPH_TO_OBJ') {
+                    let allReached = true;
+                    for (let i = 0; i < particlesCount * 3; i++) {
+                        let diff = targetObjectVertices[i] - positionsArray[i];
+                        positionsArray[i] += diff * 2.5 * deltaTime;
+                        if (Math.abs(diff) > 0.1) allReached = false;
+                    }
+                    positionsAttribute.needsUpdate = true;
+                    
+                    if (allReached) {
+                        currentMode = 'OBJ';
+                        particles.visible = false;
+                        if (loadedMeshGroup) loadedMeshGroup.visible = true;
+                    }
+                } 
+                else if (currentMode === 'MORPH_TO_SPHERE') {
+                    particles.visible = true;
+                    if (loadedMeshGroup) loadedMeshGroup.visible = false;
+                    
+                    let allReached = true;
+                    for (let i = 0; i < particlesCount * 3; i++) {
+                        let diff = initialPositions[i] - positionsArray[i];
+                        positionsArray[i] += diff * 2.5 * deltaTime;
+                        if (Math.abs(diff) > 0.1) allReached = false;
+                        velocities[i] = 0; // Prevent scattered noise during morph
+                    }
+                    positionsAttribute.needsUpdate = true;
+                    
+                    if (allReached) {
+                        currentMode = 'SPHERE';
+                    }
+                }
+
+                else if (currentMode === 'MORPH_TO_SNAPSHOT') {
+                    particles.visible = true;
+                    if (loadedMeshGroup) loadedMeshGroup.visible = false;
+                    
+                    let allReached = true;
+                    for (let i = 0; i < particlesCount * 3; i++) {
+                        let diff = savedSnapshot[i] - positionsArray[i];
+                        positionsArray[i] += diff * 3.5 * deltaTime; // Smooth morph speed
+                        if (Math.abs(diff) > 0.05) allReached = false;
+                        velocities[i] = 0; // Lock velocities
+                    }
+                    positionsAttribute.needsUpdate = true;
+                    
+                    if (allReached) {
+                        currentMode = 'SNAPSHOT'; // Freeze at this mapped shape
+                        toggleSphereBtn.style.display = 'flex'; // Allow them to return to sphere
+                        uploadBtn.style.display = 'none';
+                    }
+                }
+                else if (currentMode === 'SNAPSHOT') {
+                    // Do nothing, just hold the mapped data structure!
+                }
+                
+                else if (currentMode === 'SPHERE') {
+                    // Original SPV Sphere Logic
+                    let currentSoundDetected = false;
+                    normalizedVolume = 0;
+                    if (analyser && audioDataArray && isMicControlEnabled) {
+                        analyser.getByteFrequencyData(audioDataArray);
+                        let averageVolume = 0;
+                        for (let i = 0; i < audioDataArray.length; i++) averageVolume += audioDataArray[i]; 
+                        averageVolume /= audioDataArray.length;
+                        normalizedVolume = Math.min(averageVolume / 200.0, 1.0); 
+                        if (normalizedVolume > 0.3) currentSoundDetected = true;
+                    }
+                    soundDetected = currentSoundDetected;
+
+                    for (let i = 0; i < particlesCount; i++) {
+                        const i3 = i * 3;
+                        const currentPos = tempVec3.set(positionsArray[i3], positionsArray[i3 + 1], positionsArray[i3 + 2]);
+                        const initialPos = new THREE.Vector3(initialPositions[i3], initialPositions[i3 + 1], initialPositions[i3 + 2]);
+
+                        if (isMicControlEnabled) {
+                            if (soundDetected) { 
+                                const disruptionScale = disruptionFactor * normalizedVolume * deltaTime * 60; 
+                                positionsArray[i3] += (Math.random() - 0.5) * disruptionScale;
+                                positionsArray[i3 + 1] += (Math.random() - 0.5) * disruptionScale;
+                                positionsArray[i3 + 2] += (Math.random() - 0.5) * disruptionScale;
+                                colorsArray[i3] = sunColor.r; colorsArray[i3 + 1] = sunColor.g; colorsArray[i3 + 2] = sunColor.b;
+                                const velocityScale = disruptionFactor * normalizedVolume * deltaTime * 20;
+                                velocities[i3] = (Math.random() - 0.5) * velocityScale;
+                                velocities[i3 + 1] = (Math.random() - 0.5) * velocityScale;
+                                velocities[i3 + 2] = (Math.random() - 0.5) * velocityScale;
+                            } else { 
+                                const normal = initialPos.clone().normalize();
+                                const tangentialMovement = new THREE.Vector3((Math.random() - 0.5) * cloudMovementFactor, (Math.random() - 0.5) * cloudMovementFactor, (Math.random() - 0.5) * cloudMovementFactor).projectOnPlane(normal); 
+                                const targetPos = initialPos.clone().add(normal.multiplyScalar(Math.random() * cloudOffsetAmount)).add(tangentialMovement);
+                                const returnVec = targetPos.clone().sub(currentPos);
+                                const returnSpeed = reconstructionSpeed * deltaTime * 60; 
+                                positionsArray[i3] += returnVec.x * returnSpeed; positionsArray[i3 + 1] += returnVec.y * returnSpeed; positionsArray[i3 + 2] += returnVec.z * returnSpeed;
+                                const currentCol = tempColor.setRGB(colorsArray[i3], colorsArray[i3 + 1], colorsArray[i3 + 2]);
+                                const finalColor = currentCol.lerp(whiteColor, returnLerpFactor * deltaTime * 60); 
+                                colorsArray[i3] = finalColor.r; colorsArray[i3 + 1] = finalColor.g; colorsArray[i3 + 2] = finalColor.b;
+                                velocities[i3] *= 0.9; velocities[i3 + 1] *= 0.9; velocities[i3 + 2] *= 0.9; 
+                            }
+                        } else { 
+                            const distance = currentPos.length();
+                            const toCenter = currentPos.clone().multiplyScalar(-1);
+                            const springForce = toCenter.normalize().multiplyScalar((distance - radius) * springFactor);
+                            velocities[i3] -= springForce.x; velocities[i3 + 1] -= springForce.y; velocities[i3 + 2] -= springForce.z;
+                            velocities[i3] += (Math.random() - 0.5) * noiseFactor; velocities[i3 + 1] += (Math.random() - 0.5) * noiseFactor; velocities[i3 + 2] += (Math.random() - 0.5) * noiseFactor;
+                            velocities[i3] *= dampingFactor; velocities[i3 + 1] *= dampingFactor; velocities[i3 + 2] *= dampingFactor;
+                            const timeOffset = elapsedTime * 0.5 + i * 0.1; 
+                            positionsArray[i3] += velocities[i3] * Math.sin(timeOffset);
+                            positionsArray[i3 + 1] += velocities[i3 + 1] * Math.sin(timeOffset + 1);
+                            positionsArray[i3 + 2] += velocities[i3 + 2] * Math.sin(timeOffset + 2);
+
+                            const normalizedDistance = currentPos.length() / radius;
+                            const glowIntensity = Math.max(0, 1.0 - Math.abs(normalizedDistance - 1.0)) * 2.0; 
+                            const baseColor = new THREE.Color().setHSL(THREE.MathUtils.randFloat(0.0, 0.1), THREE.MathUtils.randFloat(0.8, 1.0), THREE.MathUtils.randFloat(0.6, 0.8));
+                            const finalColor = new THREE.Color().lerpColors(baseColor, whiteColor, glowIntensity * 0.4); 
+                            colorsArray[i3] = finalColor.r; colorsArray[i3 + 1] = finalColor.g; colorsArray[i3 + 2] = finalColor.b;
+                        }
+                    }
+                    positionsAttribute.needsUpdate = true;
+                    colorsAttribute.needsUpdate = true;
+                }
+            }
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
