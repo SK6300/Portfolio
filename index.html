@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shivakrishna Thatikayala | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #1691d3;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden;
+            background-color: var(--bg-color);
+        }
+
+        /* --- Cinematic Background --- */
+        body::before, body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            z-index: -1; pointer-events: none;
+        }
+
+        body::before {
+            background-image: url('silver.png');
+            background-size: cover;
+            filter: blur(5px) brightness(0.45);
+        }
+
+        body::after {
+            background-image: var(--dynamic-bg, none);
+            background-size: var(--bg-size, contain);
+            background-position: var(--bg-pos, center);
+            filter: brightness(var(--bg-bright, 0.6));
+            opacity: var(--bg-opacity, 0); 
+            transition: opacity 0.5s ease-in-out; 
+        }
+
+        /* --- Header Layout --- */
+        header { display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 100px 5% 60px; max-width: 1100px; margin: 0 auto; flex-wrap: nowrap; }
+        
+        .profile-wrapper { position: relative; width: 170px; height: 170px; flex-shrink: 0; z-index: 100; }
+        .profile-wrapper::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.6);
+            width: 480px; height: 480px; background: radial-gradient(circle, rgba(0, 255, 204, 0.1) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 70%);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); -webkit-mask-image: radial-gradient(circle, black 20%, transparent 70%); mask-image: radial-gradient(circle, black 20%, transparent 70%);
+            opacity: 0; visibility: hidden; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;
+        }
+        .profile-wrapper:hover::after { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+        .profile-pic { width: 100%; height: 100%; border-radius: 25px; object-fit: cover; border: 2px solid var(--glass-border); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: all 0.4s ease; position: relative; z-index: 10; cursor: pointer; background-color: #111; }
+        .profile-wrapper:hover .profile-pic { border-color: rgba(0, 195, 255, 0.4); box-shadow: 0 0 25px rgba(0, 213, 255, 0.3); }
+
+        .social-icon { position: absolute; top: 50%; left: 50%; z-index: 15; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform: translate(-50%, -50%) scale(0.1); opacity: 0; pointer-events: none; }
+        .icon-1 { --tx: 0px; --ty: -145px; transition-delay: 0.0s; } 
+        .icon-2 { --tx: 110px; --ty: -85px; transition-delay: 0.05s; } 
+        .icon-3 { --tx: 110px; --ty: 85px; transition-delay: 0.1s; } 
+        .icon-4 { --tx: 0px; --ty: 145px; transition-delay: 0.15s; } 
+        .icon-5 { --tx: -110px; --ty: 85px; transition-delay: 0.2s; } 
+        .icon-6 { --tx: -110px; --ty: -85px; transition-delay: 0.25s; } 
+        
+        .profile-wrapper:hover .social-icon { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1); opacity: 1; pointer-events: auto; }
+        .icon-inner { display: flex; align-items: center; justify-content: center; color: white; font-size: 1.6rem; text-decoration: none; transition: all 0.3s ease; position: relative; background: transparent; border: none; }
+        .icon-inner:hover { color: var(--accent); transform: scale(1.3); text-shadow: 0 0 15px var(--accent); }
+        .icon-inner span { position: absolute; background: rgba(0, 0, 0, 0.85); color: white; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; opacity: 0; visibility: hidden; transition: 0.3s; white-space: nowrap; pointer-events: none; border: 1px solid var(--glass-border); font-family: 'Inter', sans-serif; font-weight: 600; }
+        .icon-1 .icon-inner span { bottom: 130%; } .icon-4 .icon-inner span { top: 130%; } .icon-2 .icon-inner span, .icon-3 .icon-inner span { left: 130%; } .icon-5 .icon-inner span, .icon-6 .icon-inner span { right: 130%; }
+        .icon-inner:hover span { opacity: 1; visibility: visible; color: var(--accent); }
+
+        .header-text { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; min-width: 250px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        h1 { font-size: 2.8rem; margin: 0; font-weight: 800; letter-spacing: -1px; white-space: nowrap; transition: letter-spacing 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        h1 span { color: var(--accent); transition: inherit; }
+        h2 { font-size: 1.1rem; color: var(--text-muted); font-weight: 300; margin-top: 5px; }
+        .header-personal-info { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; font-size: 0.95rem; color: var(--text-muted); border-left: 2px solid rgba(0, 255, 204, 0.3); padding-left: 15px; }
+        .header-personal-info span { display: flex; align-items: center; gap: 10px; }
+        .header-personal-info i { color: var(--accent); width: 16px; text-align: center; }
+
+        .header-3d-model { width: 300px; height: 300px; flex-shrink: 0; position: relative; z-index: 10; cursor: grab; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .header-3d-model:active { cursor: grabbing; }
+        .header-3d-model:hover { transform: translateY(-5px); }
+        .header-3d-model model-viewer { width: 100%; height: 100%; outline: none; background-color: transparent; }
+
+        @media (min-width: 951px) { 
+            .profile-wrapper:hover ~ .header-text { transform: translateX(35px); } 
+            .profile-wrapper:hover ~ .header-text h1 { letter-spacing: 1.5px; } 
+            .profile-wrapper:hover ~ .header-3d-model { transform: translateX(20px); } 
+        }
+
+        @media (max-width: 950px) { header { flex-wrap: wrap; justify-content: center; text-align: center; } .header-text { align-items: center; } .header-personal-info { border-left: none; padding-left: 0; align-items: center; } }
+        @media (max-width: 850px) { header { flex-direction: column; gap: 30px; padding: 80px 5% 40px; } .profile-wrapper { width: 150px; height: 150px; } h1 { font-size: 2.3rem; } .profile-wrapper::after { width: 380px; height: 380px; } .header-3d-model { width: 250px; height: 250px; } }
+        @media (max-width: 480px) { .profile-wrapper { width: 130px; height: 130px; } h1 { font-size: 1.8rem; } h2 { font-size: 1rem; } .profile-wrapper::after { width: 320px; height: 320px; } .header-3d-model { width: 200px; height: 200px; } }
+
+        /* Lightbox */
+        .lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s ease; cursor: pointer; }
+        .lightbox.active { opacity: 1; visibility: visible; }
+        .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 35px; box-shadow: 0 0 60px rgba(0, 255, 204, 0.3); transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid rgba(255, 255, 255, 0.1); }
+        .lightbox.active img { transform: scale(1); }
+
+        /* --- Main Content --- */
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 30px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); margin-bottom: 30px; }
+        main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        h3 { border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-top: 0; font-weight: 600; display: flex; align-items: center; gap: 10px;}
+        ul { line-height: 1.8; padding-left: 20px; color: var(--text-muted); }
+        li strong { color: var(--text-main); }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .tag { background: rgba(0, 255, 204, 0.1); color: var(--accent); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(0, 255, 204, 0.2); transition: all 0.3s ease; }
+        .tag:hover { background: var(--accent); color: #000; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4); }
+        
+        /* --- Interactive Tabs --- */
+        .project-tabs { 
+            display: flex; 
+            justify-content: flex-start; 
+            gap: 12px; 
+            flex-wrap: nowrap; 
+            overflow-x: auto; 
+            margin-bottom: 15px; 
+            padding: 15px 5px 25px 5px; 
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .project-tabs::-webkit-scrollbar { display: none; }
+
+        .tab { position: relative; z-index: 35; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; overflow: hidden; margin: 0; white-space: nowrap; }
+        .tab:first-child { margin-left: 0; }
+        .tab:last-child { margin-right: 0; }
+
+        .tab::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 10px; padding: 2px; background: linear-gradient(45deg, rgba(0, 255, 204, 0.8), rgba(22, 145, 211, 0.8)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: all 0.5s ease; z-index: -1; }
+        .tab::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 255, 204, 0.2); filter: blur(15px); opacity: 0; transition: all 0.5s ease; z-index: -2; pointer-events: none; }
+        
+        .tab:hover, .tab.active { color: #fff; transform: translateY(-4px); background: rgba(0, 255, 204, 0.05); box-shadow: 0 8px 25px rgba(0, 255, 204, 0.5), inset 0 0 15px rgba(0, 255, 204, 0.2); border-color: transparent; }
+        .tab:hover::before, .tab.active::before { opacity: 1; }
+        .tab:hover::after, .tab.active::after { opacity: 1; }
+        
+        .tab i { font-size: 1.1rem; transition: 0.4s; }
+        .tab:hover i, .tab.active i { color: var(--accent); transform: scale(1.1); text-shadow: 0 0 15px var(--accent); }
+
+        .project-display { 
+            height: 1000px;
+            min-height: 100%; 
+            max-height: 100%; 
+            position: auto; 
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 12px; 
+            padding: 25px; 
+            border: 1px solid var(--glass-border); 
+            overflow: auto; 
+            resize: vertical;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-display::-webkit-scrollbar { width: 8px; }
+        .project-display::-webkit-scrollbar-track { background: transparent; }
+        .project-display::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.2); border-radius: 10px; }
+        .project-display::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 204, 0.4); }
+
+        .project-card { 
+            display: none; 
+            flex-direction: column; 
+            flex-grow: 1; 
+            height: 100%;
+            animation: fadeInCard 0.4s ease-in-out; 
+        }
+        .project-card.active { display: flex; }
+        @keyframes fadeInCard { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Preview / Code Controls --- */
+        .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .card-header-flex h4 { margin: 0; color: var(--accent); font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+        
+        .view-toggle { display: flex; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        .toggle-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
+        .toggle-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+        .toggle-btn.active { color: #000; background: var(--accent); box-shadow: 0 2px 10px rgba(22, 145, 211, 0.3); }
+
+        .view-section { 
+            display: none; 
+            animation: fadeInSection 0.3s ease; 
+            flex-direction: column; 
+            flex-grow: 1; 
+            height: 100%;
+        }
+        .view-section.active { display: flex; }
+        @keyframes fadeInSection { from { opacity: 0; } to { opacity: 1; } }
+
+        .project-card p.description { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 15px; }
+        
+        .vscode-container { width: 100%; height: 550px; background: #1e1e1e; border-radius: 8px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; flex-grow: 1; min-height: 500px; }
+        .vscode-header { background: #2d2d2d; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #111; }
+        .vscode-dots { display: flex; gap: 8px; }
+        .vscode-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .vscode-dot.red { background: #ff5f56; }
+        .vscode-dot.yellow { background: #ffbd2e; }
+        .vscode-dot.green { background: #27c93f; }
+        .vscode-tab { color: #9cdcfe; font-family: monospace; font-size: 13px; margin-left: 15px; display: flex; align-items: center; gap: 5px; }
+        .vscode-content { overflow: auto; padding: 15px; flex-grow: 1; background: #1e1e1e; }
+        .vscode-content pre { margin: 0; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; line-height: 1.5; white-space: pre; }
+        
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+
+        .jupyter-output { width: 100%; height: 500px; background: #111; border-left: 4px solid #4ec9b0; padding: 15px; border-radius: 6px; font-family: 'Consolas', monospace; color: #d4d4d4; font-size: 0.85rem; overflow-x: auto; line-height: 1.5; }
+        .jupyter-line { margin-bottom: 8px; }
+        .j-in { color: #569cd6; font-weight: bold; }
+        .j-out { color: #ce9178; }
+
+        /* ========================================================= */
+        /* --- REALISTIC VIRTUAL SMARTPHONE ENGINE & OS STYLES --- */
+        /* ========================================================= */
+        .phone-viewport-wrapper {
+            perspective: 1400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        .virtual-phone {
+            position: relative;
+            width: 320px;
+            height: 640px;
+            background: #000;
+            border-radius: 46px;
+            border: 11px solid #1a1a20;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 
+                        0 0 35px rgba(0, 255, 204, 0.15),
+                        inset 0 0 10px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transform: rotateX(8deg) rotateY(-8deg);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+            user-select: none;
+        }
+
+        .virtual-phone:hover {
+            transform: rotateX(0deg) rotateY(0deg) scale(1.02);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95), 0 0 40px rgba(22, 145, 211, 0.35);
+        }
+
+        .phone-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Wallpaper with Reactive Blur Stages */
+        .phone-wallpaper-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('PS 2.jpg');
+            background-size: cover;
+            background-position: center top;
+            filter: blur(18px) brightness(0.7);
+            transition: filter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s ease;
+            transform: scale(1.08);
+            z-index: 1;
+        }
+
+        .phone-screen.unlocked .phone-wallpaper-bg {
+            filter: blur(0px) brightness(0.9);
+            transform: scale(1);
+        }
+
+        .phone-screen.drawer-open .phone-wallpaper-bg {
+            filter: blur(20px) brightness(0.5) !important;
+            transform: scale(1.06);
+        }
+
+        .phone-screen.control-open .phone-wallpaper-bg {
+            filter: blur(28px) brightness(0.4) !important;
+            transform: scale(1.08);
+        }
+
+        /* Status Bar */
+        .phone-status-bar {
+            height: 38px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #fff;
+            z-index: 50;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+        .status-icons-cluster {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        /* Dynamic Island / Notch */
+        .camera-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 22px;
+            background: #000;
+            border-radius: 12px;
+            z-index: 60;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .camera-notch::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #111;
+            border: 2px solid #222;
+        }
+        .camera-notch:hover {
+            width: 130px;
+            height: 26px;
+            box-shadow: 0 0 15px rgba(22, 145, 211, 0.5);
+        }
+
+        /* Top-Right Corner Pull Zone for Quick Settings */
+        .control-pull-zone {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 42px;
+            z-index: 65;
+            cursor: pointer;
+        }
+
+        /* --- REALISTIC COMPACT CONTROL CENTER (FLAGSHIP OS LOOK) --- */
+        .phone-control-center {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(15, 20, 30, 0.88);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            z-index: 70;
+            transition: top 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 45px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.85);
+        }
+        .phone-control-center.open { top: 0; }
+
+        .cc-primary-tiles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .cc-tile {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.25s ease;
+        }
+        .cc-tile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #fff;
+            transition: all 0.25s ease;
+        }
+        .cc-tile-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .cc-tile-info .tile-name {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .cc-tile-info .tile-sub {
+            font-size: 0.62rem;
+            color: #999;
+        }
+        .cc-tile.active {
+            background: rgba(22, 145, 211, 0.3);
+            border-color: rgba(22, 145, 211, 0.6);
+        }
+        .cc-tile.active .cc-tile-icon {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 12px rgba(22, 145, 211, 0.6);
+        }
+        .cc-tile.active .tile-sub {
+            color: #55c8ff;
+        }
+
+        .cc-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .cc-mini-toggle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .cc-mini-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+        .cc-mini-label {
+            font-size: 0.63rem;
+            color: #bbb;
+            font-weight: 500;
+            text-align: center;
+        }
+        .cc-mini-toggle.active .cc-mini-btn {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px rgba(22, 145, 211, 0.6);
+            border-color: transparent;
+        }
+        .cc-mini-toggle.active .cc-mini-label {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* Sliders */
+        .cc-sliders-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 2px;
+        }
+        .cc-slider-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .cc-slider-box i {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .cc-slider-bar {
+            flex-grow: 1;
+            height: 5px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .cc-slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        /* Control Panel Close Indicator */
+        .cc-close-hint {
+            display: flex;
+            justify-content: center;
+            padding-top: 4px;
+            cursor: pointer;
+        }
+        .cc-drag-handle {
+            width: 38px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- LOCK SCREEN LAYER --- */
+        .phone-lock-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 75px 20px 30px;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+            cursor: grab;
+        }
+        .phone-lock-screen.unlocked {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .lock-clock-box {
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.9);
+        }
+        .lock-time {
+            font-size: 3.8rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+        .lock-date {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 8px;
+            color: rgba(255,255,255,0.85);
+        }
+        .lock-bottom-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.85);
+            font-size: 0.8rem;
+            font-weight: 600;
+            animation: bounceUp 1.8s infinite ease-in-out;
+            cursor: pointer;
+        }
+        .lock-swipe-bar {
+            width: 110px;
+            height: 4px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+        @keyframes bounceUp {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* --- HOME SCREEN LAYER (CLEAN WALLPAPER FOCUS) --- */
+        .phone-home-screen {
+            position: relative;
+            z-index: 20;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            opacity: 0;
+            transform: scale(0.92);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: none;
+            padding-bottom: 5px;
+        }
+        .phone-screen.unlocked .phone-home-screen {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .app-item:active { transform: scale(0.85); }
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .app-name {
+            font-size: 0.72rem;
+            color: #eee;
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Swipe-Up Hint for More Apps Drawer */
+        .app-drawer-hint-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding-bottom: 10px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.72rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+        .app-drawer-hint-zone:hover {
+            transform: translateY(-3px);
+            color: var(--accent);
+        }
+        .app-drawer-hint-zone i {
+            animation: bounceSmall 1.5s infinite;
+        }
+        @keyframes bounceSmall {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Bottom Glass Dock */
+        .phone-dock {
+            margin: 0 15px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 26px;
+            height: 68px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        /* --- APP DRAWER (SLIDE UP OVERLAY) --- */
+        .phone-app-drawer {
+            position: absolute;
+            left: 0;
+            bottom: -100%;
+            width: 100%;
+            height: 82%;
+            background: rgba(12, 16, 25, 0.88);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            z-index: 68;
+            transition: bottom 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 12px 18px 25px;
+            box-sizing: border-box;
+            box-shadow: 0 -15px 35px rgba(0, 0, 0, 0.85);
+        }
+        .phone-app-drawer.open { bottom: 0; }
+
+        .drawer-handle-zone {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 4px 0 12px;
+            cursor: pointer;
+        }
+        .drawer-bar {
+            width: 36px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .drawer-search-bar {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .drawer-apps-scroll {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px 12px;
+            align-content: start;
+            padding-bottom: 10px;
+        }
+        .drawer-apps-scroll::-webkit-scrollbar { display: none; }
+
+        /* Dynamic Feedback HUD */
+        .app-feedback-hud {
+            position: absolute;
+            bottom: 95px;
+            left: 50%;
+            transform: translate(-50%, 30px);
+            width: 88%;
+            background: rgba(12, 16, 26, 0.94);
+            border: 1px solid var(--accent);
+            backdrop-filter: blur(18px);
+            border-radius: 14px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.3);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 85;
+        }
+        .app-feedback-hud.active {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* --- 3D Showcase & Video Carousel --- */
+        #showcase-container { width: 100%; height: 550px; position: relative; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); margin-top: 10px; }
+        .download-float-btn { position: absolute; bottom: 20px; right: 20px; z-index: 20; background: rgba(0, 255, 204, 0.15); border: 1px solid var(--accent); color: var(--accent); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.3s ease; pointer-events: auto; }
+        .download-float-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px rgba(0, 255, 204, 0.4); transform: translateY(-2px); }
+    
+        .video-player-container { position: relative; width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 15px; margin: 0 auto; transition: max-width 0.5s ease; }
+        .netflix-carousel { display: flex; gap: 15px; overflow-x: auto; padding: 15px 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .netflix-carousel::-webkit-scrollbar { display: none; }
+        .vid-thumbnail { flex: 0 0 160px; height: 90px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.5; position: relative; overflow: hidden; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .vid-thumbnail:hover { transform: scale(1.08) translateY(-5px); opacity: 1; border-color: rgba(0, 255, 204, 0.5); box-shadow: 0 10px 25px rgba(0, 255, 204, 0.2); z-index: 10; color: #fff; }
+        .vid-thumbnail.active { opacity: 1; border-color: var(--accent); transform: scale(1.05); color: #fff; box-shadow: 0 0 20px rgba(22, 145, 211, 0.4); }
+        .vid-thumbnail span { position: relative; z-index: 2; font-weight: 600; text-shadow: 0 2px 5px rgba(0,0,0,0.9); pointer-events: none; }
+        #mainVideoPlayer { width: 100%; height: auto; max-height: 75vh; object-fit: contain; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.4s ease; background: #000; margin: 0 auto; display: block; }
+      
+        /* Photoshop Slider */
+        .ps-slider-container { position: relative; width: 100%; height: 550px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); background: #0a0a0a; margin-top: 15px; }
+        .ps-slide { position: absolute; inset: 0; opacity: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
+        .ps-slide img { width: 100%; height: 100%; object-fit: contain; }
+        .ps-slide.active { opacity: 1; pointer-events: auto; z-index: 5; }
+
+        .ps-slide.fade-out-left { animation: slideOutLeft 0.5s forwards cubic-bezier(0.25, 1, 0.5, 1); }
+        .ps-slide.fade-out-right { animation: slideOutRight 0.5s forwards cubic-bezier(0.25, 1, 0.5, 1); }
+        .ps-slide.fade-in-left { animation: slideInLeft 0.5s forwards cubic-bezier(0.25, 1, 0.5, 1); pointer-events: auto; z-index: 5; }
+        .ps-slide.fade-in-right { animation: slideInRight 0.5s forwards cubic-bezier(0.25, 1, 0.5, 1); pointer-events: auto; z-index: 5; }
+
+        @keyframes slideOutLeft { 0% { transform: translateX(0) skewX(0); filter: blur(0); opacity: 1; } 100% { transform: translateX(-150px) skewX(10deg); filter: blur(20px); opacity: 0; } }
+        @keyframes slideOutRight { 0% { transform: translateX(0) skewX(0); filter: blur(0); opacity: 1; } 100% { transform: translateX(150px) skewX(-10deg); filter: blur(20px); opacity: 0; } }
+        @keyframes slideInRight { 0% { transform: translateX(150px) skewX(-10deg); filter: blur(20px); opacity: 0; } 100% { transform: translateX(0) skewX(0); filter: blur(0); opacity: 1; } }
+        @keyframes slideInLeft { 0% { transform: translateX(-150px) skewX(10deg); filter: blur(20px); opacity: 0; } 100% { transform: translateX(0) skewX(0); filter: blur(0); opacity: 1; } }
+        
+        .ps-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%); padding: 40px 20px 20px; display: flex; justify-content: space-between; align-items: flex-end; transform: translateY(20px); opacity: 0; transition: all 0.4s ease 0.2s; }
+        .ps-slide.active .ps-overlay, .ps-slide.fade-in-left .ps-overlay, .ps-slide.fade-in-right .ps-overlay { transform: translateY(0); opacity: 1; }
+        .ps-overlay h5 { margin: 0; color: #fff; font-size: 1.3rem; font-weight: 800; letter-spacing: 0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .ps-downloads { display: flex; gap: 12px; }
+        .btn-dl { background: rgba(22, 145, 211, 0.15); border: 1px solid var(--accent); color: var(--text-main); padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; backdrop-filter: blur(8px); transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
+        .btn-dl i { color: var(--accent); }
+        .btn-dl:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(22, 145, 211, 0.4); transform: translateY(-3px); }
+
+        .ps-nav { position: absolute; top: 50%; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 15px; transform: translateY(-50%); z-index: 10; pointer-events: none; }
+        .ps-nav button { pointer-events: auto; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: #fff; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px); transition: all 0.3s ease; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .ps-nav button:hover { background: var(--accent); color: #000; border-color: transparent; transform: scale(1.15); box-shadow: 0 0 20px rgba(22, 145, 211, 0.5); }
+
+        /* Direct Doctor 3D Icon & Shining Pass */
+        .dd-card-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 520px;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        .dd-bg-backplate {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 255, 204, 0.15) 0%, rgba(22, 145, 211, 0.08) 45%, transparent 75%);
+            opacity: 0;
+            filter: blur(25px);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease;
+            transform: scale(0.85);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .dd-card-wrapper:hover .dd-bg-backplate {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .dd-3d-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 255, 204, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+            transform-style: preserve-3d;
+            z-index: 5;
+        }
+        .dd-3d-box img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            border-radius: 20px;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.7));
+        }
+        .dd-3d-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -150%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(
+                120deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.15) 30%,
+                rgba(255, 255, 255, 0.85) 50%,
+                rgba(0, 255, 204, 0.6) 65%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(25deg);
+            opacity: 0;
+            transition: all 0.75s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+            z-index: 10;
+        }
+        .dd-card-wrapper:hover .dd-3d-box,
+        .dd-3d-box:hover {
+            transform: translateY(-8px) rotateX(12deg) rotateY(-8deg) scale(1.08);
+            box-shadow: 0 20px 40px rgba(0, 255, 204, 0.35), 0 0 25px rgba(22, 145, 211, 0.4);
+            border-color: rgba(0, 255, 204, 0.8);
+        }
+        .dd-card-wrapper:hover .dd-3d-box::before,
+        .dd-3d-box:hover::before {
+            left: 200%;
+            opacity: 1;
+        }
+        .dd-content-body {
+            position: relative;
+            z-index: 5;
+            transition: transform 0.4s ease;
+        }
+        .dd-content-body p {
+            color: var(--text-muted);
+            max-width: 640px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            transition: color 0.4s ease, text-shadow 0.4s ease;
+        }
+        .dd-card-wrapper:hover .dd-content-body p {
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lightbox" id="profileLightbox">
+        <img src="noise&smooth.jpg" alt="Enlarged Profile">
+    </div>
+
+    <header>
+        <div class="profile-wrapper">
+            <img src="noise&smooth.jpg" alt="Profile" class="profile-pic" id="profileImg">
+            <div class="social-icon icon-1"><a href="https://instagram.com/aamthe_best" target="_blank" class="icon-inner"><i class="fab fa-instagram"></i><span>Insta: aamthe_best</span></a></div>
+            <div class="social-icon icon-2"><a href="https://wa.me/916300893650" target="_blank" class="icon-inner"><i class="fab fa-whatsapp"></i><span>Message WhatsApp</span></a></div>
+            <div class="social-icon icon-3"><a href="tel:+916300893650" class="icon-inner"><i class="fas fa-phone"></i><span>Call 6300893650</span></a></div>
+            <div class="social-icon icon-4"><a href="mailto:amshiva0563@gmail.com" class="icon-inner"><i class="fas fa-envelope"></i><span>Email Me</span></a></div>
+            <div class="social-icon icon-5"><a href="https://www.linkedin.com/in/shivakrishna-thatikayala" target="_blank" class="icon-inner"><i class="fab fa-linkedin"></i><span>View LinkedIn</span></a></div>
+            <div class="social-icon icon-6"><a href="https://github.com/SK6300/CHURN-GUARD" target="_blank" class="icon-inner"><i class="fab fa-github"></i><span>View GitHub</span></a></div>
+        </div>
+        
+        <div class="header-text">
+            <h1>Shivakrishna <span>Thatikayala</span></h1>
+            <h2>Data Science Enthusiast & Web Designer</h2>
+            <div class="header-personal-info">
+                <span><i class="fas fa-map-marker-alt"></i> H.no 9-17 Zaffargadh(vlg), Zaffargadh(mdl), Jangaon(dst), Telangana.</span>
+                <span><i class="fas fa-birthday-cake"></i> Born: 15-05-2002</span>
+                <span><i class="fas fa-language"></i> English, Telugu, Hindi</span>
+            </div>
+        </div>
+
+        <div class="header-3d-model">
+            <model-viewer id="header-model" src="Blender_project.glb" camera-controls disable-zoom disable-pan disable-tap shadow-intensity="1" camera-orbit="90deg 75deg auto" orientation="10deg -1deg 0deg"></model-viewer>
+        </div>
+    </header>
+
+    <main>
+        <div class="grid-2">
+            <div class="glass-panel" style="margin-bottom: 0;">
+                <h3><i class="fas fa-user-astronaut"></i> About Me</h3>
+                <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">
+                    I am a Visual Alchemist and Digital Architect dedicated to blending creative coding with artistic design.
+I transform ideas into immersive 3D realities using Three.js, Photoshop, and Premiere Pro for high-impact visuals.
+My work focuses on bridging the gap between technical logic and beauty, ensuring projects are smooth and engaging.
+From sound-reactive particle systems to cinematic video edits, I enjoy engineering unique digital experiences.
+I am passionate about turning your vision into a high-quality masterpiece through precision and creative innovation.
+                </p>
+            </div>
+            <div class="glass-panel" style="margin-bottom: 0;">
+                <h3><i class="fas fa-graduation-cap"></i> Education & Projects</h3>
+                <ul>
+                    <li><strong>BCA - Bachelor of Computer Applications (2026)</strong><br>Kakatiya Government Degree College</li>
+                    <li><strong>Project: DIRECT DOCTOR</strong><br>Healthcare Teleconsultation & Diagnostics Platform.</li>
+                    <li><strong>AWS Cloud & DevOps Engineering</strong><br>Automated CI/CD Pipelines, Docker containerization & Terraform IaC architecture.</li>
+                    <li><strong>Personal LOGO </strong><br>I used Blender for creating personal LOGO baced on my name representing art </li>
+                    
+                </ul>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h3><i class="fas fa-laptop-code"></i> Technical Skills</h3>
+            <div class="tag-container">
+                <span class="tag">HTML / CSS / JS</span>
+                <span class="tag">C / C++</span>
+                <span class="tag">Python</span>
+                <span class="tag">Blender (3D)</span>
+                <span class="tag">Photoshop / Premiere Pro / After Effects</span>
+                <span class="tag">Android Studio - Mobile App Development with kotlin </span>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h3><i class="fas fa-project-diagram"></i> Project Details</h3>            
+           <div class="project-tabs">
+                <div class="tab active" data-target="vscode"><i class="fas fa-code"></i> Web Design</div>
+                <div class="tab" data-target="aws_devops"><i class="fab fa-aws"></i> AWS_DEVOPS</div>
+                <div class="tab" data-target="blender"><i class="fas fa-cube"></i> Blender 3D</div>
+                <div class="tab" data-target="myedits"><i class="fas fa-video"></i> My Edits</div>
+                <div class="tab" data-target="photoshop"><i class="fas fa-paint-brush"></i> Photoshop</div>
+                <div class="tab" data-target="android"><i class="fab fa-android"></i> Android Studio</div>
+                <div class="tab" data-target="direct_doctor"><i class="fas fa-user-md"></i> DIRECT DOCTOR</div>
+            </div>
+
+           <div class="project-display" title="Drag the bottom right corner to resize!">
+                
+                <div class="project-card active" id="vscode">
+                    <div class="card-header-flex">
+                        <h4><i class="fas fa-code"></i> Interactive SPV</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-play"></i> Live Preview</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> View Code</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-section preview active">
+                        <p class="description">Interactive Particle Sphere. Click the button below to load the live 3D environment.</p>
+                        
+                        <div id="spv-container" style="width: 100%; height: 500px; border: 1px solid var(--glass-border); border-radius: 12px; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <i class="fas fa-atom" style="font-size: 4rem; color: rgba(0, 255, 204, 0.3); margin-bottom: 20px;"></i>
+                            <button id="load-spv-btn" class="download-float-btn" style="position: relative; bottom: 0; right: 0;">
+                                <i class="fas fa-bolt"></i> Activate Particle Sphere
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fab fa-js" style="color: #f7df1e;"></i> particle_logic.js</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">function</span> <span class="function">processLoadedModel</span>(object) {
+    <span class="keyword">const</span> box = <span class="keyword">new</span> THREE.Box3().setFromObject(object);
+    <span class="keyword">const</span> center = box.getCenter(<span class="keyword">new</span> THREE.Vector3());
+    <span class="keyword">const</span> size = box.getSize(<span class="keyword">new</span> THREE.Vector3());
+    
+    <span class="keyword">const</span> scale = (radius * <span class="string">5</span>) / Math.max(size.x, size.y, size.z); 
+
+    object.position.sub(center).multiplyScalar(scale);
+    object.scale.set(scale, scale, scale);
+
+    <span class="keyword">let</span> extractedVertices = [];
+    object.traverse((child) =&gt; {
+        <span class="keyword">if</span> (child.isMesh) {
+            <span class="keyword">let</span> posAttr = child.geometry.attributes.position;
+            <span class="keyword">let</span> local = <span class="keyword">new</span> THREE.Vector3();
+            <span class="keyword">for</span> (<span class="keyword">let</span> i = 0; i &lt; posAttr.count; i++) {
+                local.fromBufferAttribute(posAttr, i);
+                local.applyMatrix4(child.matrixWorld); 
+                extractedVertices.push(local.clone());
+            }
+        }
+    });
+
+    currentMode = <span class="string">'MORPH_TO_OBJ'</span>;
+    particles.visible = <span class="keyword">true</span>;
+}
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" id="aws_devops">
+                    <div class="card-header-flex">
+                        <h4><i class="fab fa-aws"></i> AWS Cloud & DevOps Engineering</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-terminal"></i> Pipeline Status</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> Infrastructure Code</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-section preview active">
+                        <p class="description">Production-ready Cloud Architecture, CI/CD pipelines, and Infrastructure as Code.</p>
+                        <div class="jupyter-output" style="border-left-color: #ff9900;">
+                            <div class="jupyter-line">
+                                <span class="j-in">[AWS_SKILLS_MANIFEST]:</span> Analyzing core engineering toolchain...
+                            </div>
+                            <div class="jupyter-line" style="margin-top: 15px; border-top: 1px dashed #333; padding-top: 10px;">
+                                <span class="j-out">ACTIVE_DEVOPS_STACK:</span><br>
+                                <pre style="margin: 0; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; line-height: 1.6;">
++-------------------+---------------------------------------------------------+
+| DOMAIN            | TECHNOLOGIES & COMPETENCIES                             |
++-------------------+---------------------------------------------------------+
+| Cloud Compute     | AWS EC2, Auto-scaling Groups, AWS Lambda, ECS, EKS      |
+| Storage & DB      | Amazon S3, EBS, EFS, RDS (PostgreSQL/MySQL), DynamoDB    |
+| Networking        | VPC Architecture, Subnets, Route 53, CloudFront, ALB/NLB|
+| Containers        | Docker containerization, Multi-stage builds, Kubernetes |
+| CI/CD Pipeline    | Jenkins, GitHub Actions, AWS CodePipeline, CodeBuild    |
+| IaC & Automation  | Terraform, AWS CloudFormation, Ansible configuration   |
+| Monitoring & Logs | Amazon CloudWatch, AWS X-Ray, Prometheus & Grafana      |
+| Security & Auth   | IAM Roles/Policies, KMS encryption, Secrets Manager     |
++-------------------+---------------------------------------------------------+
+
+[INFO]: Status: 100% Verified Production Pipeline Ready.</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fas fa-file-code" style="color: #ff9900;"></i> infrastructure.tf</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">terraform</span> {
+  <span class="function">required_providers</span> {
+    aws = {
+      source  = <span class="string">"hashicorp/aws"</span>
+      version = <span class="string">"~&gt; 5.0"</span>
+    }
+  }
+}
+
+<span class="keyword">provider</span> <span class="string">"aws"</span> {
+  region = <span class="string">"ap-south-1"</span>
+}
+
+<span class="keyword">resource</span> <span class="string">"aws_vpc"</span> <span class="string">"production_vpc"</span> {
+  cidr_block           = <span class="string">"10.0.0.0/16"</span>
+  enable_dns_hostnames = <span class="keyword">true</span>
+  enable_dns_support   = <span class="keyword">true</span>
+
+  tags = {
+    Name        = <span class="string">"shiva-production-vpc"</span>
+    Environment = <span class="string">"Production"</span>
+    ManagedBy   = <span class="string">"Terraform"</span>
+  }
+}
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" id="blender">
+                    <div class="card-header-flex">
+                        <h4><i class="fas fa-cube"></i> 3D Modeling & Rendering</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-eye"></i> Live Preview</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> View Code</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-section preview active">
+                        <p class="description">Interact with my featured 3D model directly in your browser. Drag to rotate, scroll to zoom.</p>
+                        <div id="showcase-container">
+                            <model-viewer src="Blender_project.glb" auto-rotate camera-controls shadow-intensity="1" camera-orbit="90deg 75deg auto" orientation="10deg -1deg 0deg" style="width: 100%; height: 100%; background-color: transparent;"></model-viewer>
+                            <a href="Blender_project.glb" download class="download-float-btn">
+                                <i class="fas fa-download"></i> Download Project
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fab fa-html5" style="color: #e34c26;"></i> model_viewer.html</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">&lt;model-viewer</span> 
+  src=<span class="string">"assets/Blender_project.glb"</span> 
+  alt=<span class="string">"A 3D model of my project"</span>
+  auto-rotate 
+  camera-controls 
+  shadow-intensity=<span class="string">"1"</span> 
+  exposure=<span class="string">"1.2"</span>
+  camera-orbit=<span class="string">"90deg 75deg auto"</span>
+<span class="keyword">&gt;&lt;/model-viewer&gt;</span>
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" id="myedits">
+                    <div class="card-header-flex">
+                        <h4><i class="fas fa-video"></i> Video Editing Portfolio</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-play"></i> Watch Video</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-section preview active">  
+                        <div style="width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.4); padding: 20px 10px;">
+                            <div class="video-player-container">
+                                
+                                <div class="netflix-carousel" id="videoCarousel">
+                                    <div class="vid-thumbnail active" data-src="videos/amshiva0563@gmail.com.mp4">
+                                        <span>Main Portfolio Edit</span>
+                                    </div>
+                                    <div class="vid-thumbnail" data-src="videos/SPIDYUHD4k_1.mp4">
+                                        <span>Short Film Teaser</span>
+                                    </div>
+                                    <div class="vid-thumbnail" data-src="videos/CLEARUHD4k.mp4">
+                                        <span>VFX Breakdown</span>
+                                    </div>
+                                    <div class="vid-thumbnail" data-src="videos/FULLNGUPUHD4k.mp4">
+                                        <span>Short Film Teaser</span>
+                                    </div>
+                                    <div class="vid-thumbnail" data-src="videos/CLEARUHD4k.mp4">
+                                        <span>Short Film Teaser</span>
+                                    </div>
+                                </div>
+                                
+                                <video id="mainVideoPlayer" controls style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+                                    <source src="videos/amshiva0563@gmail.com.mp4" type="video/mp4">
+                                    Nuvvu vaaduthunna browser lo video tag support ledu darling.
+                                </video>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" id="photoshop">
+                    <div class="card-header-flex">
+                        <h4><i class="fas fa-paint-brush"></i> Creative Visual Storytelling</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-eye"></i> Visuals</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> Batch Script</button>
+                        </div>
+                    </div>
+
+                    <div class="view-section preview active">
+                        <p class="description">Swipe through my high-quality graphic designs. Download the original images and PSD project files below.</p>
+                        
+                        <div class="ps-slider-container">
+                            
+                            <div class="ps-slide active">
+                                <img src="PS 1.jpg" alt="Photoshop Edit 1">
+                                <div class="ps-overlay">
+                                    <h5>Creative Edit 1</h5>
+                                    <div class="ps-downloads">
+                                        <a href="PS 1.jpg" download class="btn-dl"><i class="fas fa-image"></i> JPG</a>
+                                        <a href="PS 1.psd" download class="btn-dl"><i class="fas fa-file-archive"></i> PSD</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ps-slide">
+                                <img src="PS 2.jpg" alt="Photoshop Edit 2">
+                                <div class="ps-overlay">
+                                    <h5>Creative Edit 2</h5>
+                                    <div class="ps-downloads">
+                                        <a href="PS 2.jpg" download class="btn-dl"><i class="fas fa-image"></i> JPG</a>
+                                        <a href="PS 1.psd" download class="btn-dl"><i class="fas fa-file-archive"></i> PSD</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ps-slide">
+                                <img src="YouTubeBanner.png" alt="Photoshop Edit 2">
+                                <div class="ps-overlay">
+                                    <h5>Creative Edit 2</h5>
+                                    <div class="ps-downloads">
+                                        <a href="YouTubeBanner.png" download class="btn-dl"><i class="fas fa-image"></i> JPG</a>
+                                        <a href="PS 2.psd" download class="btn-dl"><i class="fas fa-file-archive"></i> PSD</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ps-nav">
+                                <button id="ps-prev"><i class="fas fa-chevron-left"></i></button>
+                                <button id="ps-next"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fab fa-python" style="color: #3776ab;"></i> image_batch.py</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageEnhance
+<span class="keyword">import</span> os
+
+<span class="keyword">def</span> <span class="function">batch_process_images</span>(folder_path):
+    <span class="keyword">for</span> filename <span class="keyword">in</span> os.listdir(folder_path):
+        <span class="keyword">if</span> filename.endswith(<span class="string">".jpg"</span>):
+            img_path = os.path.join(folder_path, filename)
+            img = Image.<span class="function">open</span>(img_path)
+            
+            enhancer = ImageEnhance.Color(img)
+            img_colored = enhancer.<span class="function">enhance</span>(1.5) 
+            
+            contrast = ImageEnhance.Contrast(img_colored)
+            img_final = contrast.<span class="function">enhance</span>(1.2)
+            
+            img_final.<span class="function">save</span>(<span class="string">f"edited_{filename}"</span>)
+
+<span class="function">batch_process_images</span>(<span class="string">'./raw_photos'</span>)
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================== -->
+                <!-- ANDROID TAB: 3D REAL SMARTPHONE INTERFACE     -->
+                <!-- ============================================== -->
+                <div class="project-card" id="android">
+                    <div class="card-header-flex">
+                        <h4><i class="fab fa-android"></i> Virtual Smartphone Simulator</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-mobile-alt"></i> Interactive OS</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> View Code</button>
+                        </div>
+                    </div>
+
+                    <div class="view-section preview active">
+                        <p class="description">Realistic Smartphone Simulator. Hover stops tilt. Swipe up on lockscreen to reveal clean wallpaper. Swipe up from bottom hint to explore More Apps drawer. Swipe down from top-right corner for compact Control Center.</p>
+                        
+                        <div class="phone-viewport-wrapper">
+                            <div class="virtual-phone" id="interactivePhone">
+                                <div class="phone-screen" id="phoneScreen">
+                                    
+                                    <!-- Dynamic Wallpaper (PS 2.jpg) -->
+                                    <div class="phone-wallpaper-bg"></div>
+
+                                    <!-- Camera Notch & Dynamic Island -->
+                                    <div class="camera-notch" id="notchToggle" title="Click to toggle Control Center"></div>
+
+                                    <!-- Top-Right Swipe Down Hotspot for Control Center -->
+                                    <div class="control-pull-zone" id="topRightPullZone" title="Swipe or click down to open Control Center"></div>
+
+                                    <!-- Status Bar -->
+                                    <div class="phone-status-bar">
+                                        <span id="phoneClock">09:41</span>
+                                        <div class="status-icons-cluster">
+                                            <i class="fas fa-wifi" id="statusWifi"></i>
+                                            <i class="fas fa-sync-alt" id="statusRotate" style="font-size: 0.65rem;"></i>
+                                            <i class="fas fa-signal" id="statusSim"></i>
+                                            <span style="font-size: 0.65rem; font-weight: 800;">5G</span>
+                                            <i class="fas fa-battery-three-quarters"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- REALISTIC COMPACT CONTROL CENTER -->
+                                    <div class="phone-control-center" id="controlCenter">
+                                        <div class="cc-primary-tiles">
+                                            <div class="cc-tile active" id="tileWifi" data-name="Wi-Fi">
+                                                <div class="cc-tile-icon"><i class="fas fa-wifi"></i></div>
+                                                <div class="cc-tile-info">
+                                                    <span class="tile-name">Wi-Fi</span>
+                                                    <span class="tile-sub">Connected</span>
+                                                </div>
+                                            </div>
+                                            <div class="cc-tile active" id="tileData" data-name="Data SIM">
+                                                <div class="cc-tile-icon"><i class="fas fa-sim-card"></i></div>
+                                                <div class="cc-tile-info">
+                                                    <span class="tile-name">Data SIM</span>
+                                                    <span class="tile-sub">Jio 5G</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="cc-mini-grid">
+                                            <div class="cc-mini-toggle active" id="toggleRotate" data-name="Auto Rotate">
+                                                <div class="cc-mini-btn"><i class="fas fa-sync-alt"></i></div>
+                                                <span class="cc-mini-label">Auto-Rotate</span>
+                                            </div>
+                                            <div class="cc-mini-toggle" id="toggleFlight" data-name="Aeroplane Mode">
+                                                <div class="cc-mini-btn"><i class="fas fa-plane"></i></div>
+                                                <span class="cc-mini-label">Aeroplane</span>
+                                            </div>
+                                            <div class="cc-mini-toggle active" data-name="Bluetooth">
+                                                <div class="cc-mini-btn"><i class="fab fa-bluetooth-b"></i></div>
+                                                <span class="cc-mini-label">Bluetooth</span>
+                                            </div>
+                                            <div class="cc-mini-toggle" data-name="Flashlight">
+                                                <div class="cc-mini-btn"><i class="fas fa-bolt"></i></div>
+                                                <span class="cc-mini-label">Torch</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="cc-sliders-row">
+                                            <div class="cc-slider-box">
+                                                <i class="fas fa-sun"></i>
+                                                <div class="cc-slider-bar"><div class="cc-slider-fill" style="width: 75%;"></div></div>
+                                            </div>
+                                            <div class="cc-slider-box">
+                                                <i class="fas fa-volume-up"></i>
+                                                <div class="cc-slider-bar"><div class="cc-slider-fill" style="width: 60%;"></div></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="cc-close-hint" id="ccCloseHandle">
+                                            <div class="cc-drag-handle"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 1. LOCK SCREEN LAYER -->
+                                    <div class="phone-lock-screen" id="lockScreen">
+                                        <div class="lock-clock-box">
+                                            <div class="lock-time" id="lockTimeDisplay">09:41</div>
+                                            <div class="lock-date" id="lockDateDisplay">Tuesday, September 29</div>
+                                        </div>
+
+                                        <div class="lock-bottom-hint" id="unlockTrigger">
+                                            <i class="fas fa-chevron-up"></i>
+                                            <span>Swipe or Click up to Unlock</span>
+                                            <div class="lock-swipe-bar"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2. HOME SCREEN LAYER (CLEAN WALLPAPER FOCUS) -->
+                                    <div class="phone-home-screen" id="homeScreen">
+                                        
+                                        <!-- Swipe-Up Hint for More Apps Drawer -->
+                                        <div class="app-drawer-hint-zone" id="drawerTrigger">
+                                            <i class="fas fa-chevron-up"></i>
+                                            <span>Swipe up for all apps</span>
+                                        </div>
+
+                                        <!-- Bottom Glass Dock -->
+                                        <div class="phone-dock">
+                                            <div class="app-item" data-title="Phone" data-msg="Calling Shiva (+91 6300893650)...">
+                                                <div class="app-icon" style="background: #00b894;"><i class="fas fa-phone"></i></div>
+                                            </div>
+                                            <div class="app-item" data-title="WhatsApp" data-msg="Opening WhatsApp direct conversation channel...">
+                                                <div class="app-icon" style="background: #25d366;"><i class="fab fa-whatsapp"></i></div>
+                                            </div>
+                                            <div class="app-item" data-title="GitHub" data-msg="Redirecting to Shiva's GitHub repo profile...">
+                                                <div class="app-icon" style="background: #24292e;"><i class="fab fa-github"></i></div>
+                                            </div>
+                                            <div class="app-item" data-title="LinkedIn" data-msg="Opening professional network connection...">
+                                                <div class="app-icon" style="background: #0077b5;"><i class="fab fa-linkedin-in"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. SLIDE-UP APP DRAWER (ALL APPS REPOSITORY) -->
+                                    <div class="phone-app-drawer" id="appDrawer">
+                                        <div class="drawer-handle-zone" id="drawerCloseHandle">
+                                            <div class="drawer-bar"></div>
+                                        </div>
+                                        <div class="drawer-search-bar">
+                                            <i class="fas fa-search"></i>
+                                            <span>Search Shiva's apps & tools...</span>
+                                        </div>
+                                        <div class="drawer-apps-scroll">
+                                            <div class="app-item" data-title="TaRa AI" data-msg="Speech AI Core Running.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #1691d3, #00ffcc);"><i class="fas fa-microphone"></i></div>
+                                                <span class="app-name">TaRa AI</span>
+                                            </div>
+                                            <div class="app-item" data-title="Direct Doctor" data-msg="Direct Doctor Teleconsultation.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #0984e3, #00cec9);"><i class="fas fa-user-md"></i></div>
+                                                <span class="app-name">Dr. Direct</span>
+                                            </div>
+                                            <div class="app-item" data-title="SPV Morph" data-msg="WebGL Particles Activated.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);"><i class="fas fa-atom"></i></div>
+                                                <span class="app-name">SPV 3D</span>
+                                            </div>
+                                            <div class="app-item" data-title="Gallery" data-msg="Opening Shiva's Photoshop Edits.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #fd79a8, #e84393);"><i class="fas fa-images"></i></div>
+                                                <span class="app-name">Gallery</span>
+                                            </div>
+                                            <div class="app-item" data-title="Terminal" data-msg="Linux CLI Shell Connected.">
+                                                <div class="app-icon" style="background: #111; border-color: #333;"><i class="fas fa-terminal" style="color: #00ffcc;"></i></div>
+                                                <span class="app-name">CLI</span>
+                                            </div>
+                                            <div class="app-item" data-title="AWS Console" data-msg="AWS ECS cluster & Docker services operational.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #e67e22, #f39c12);"><i class="fab fa-aws"></i></div>
+                                                <span class="app-name">AWS Pod</span>
+                                            </div>
+                                            <div class="app-item" data-title="Blender 3D" data-msg="3D GLTF asset streaming module loaded.">
+                                                <div class="app-icon" style="background: linear-gradient(135deg, #ea580c, #f97316);"><i class="fas fa-cube"></i></div>
+                                                <span class="app-name">Blender</span>
+                                            </div>
+                                            <div class="app-item" data-title="Settings" data-msg="ShivaLinux 64-bit Kernel v2.6.4.">
+                                                <div class="app-icon" style="background: #2d3436;"><i class="fas fa-sliders-h"></i></div>
+                                                <span class="app-name">Settings</span>
+                                            </div>
+                                            <div class="app-item" data-title="Notes" data-msg="Syncing latest developer checklists...">
+                                                <div class="app-icon" style="background: #f1c40f;"><i class="fas fa-sticky-note" style="color:#000;"></i></div>
+                                                <span class="app-name">Notes</span>
+                                            </div>
+                                            <div class="app-item" data-title="Music" data-msg="Streaming developer focus beats...">
+                                                <div class="app-icon" style="background: #1db954;"><i class="fab fa-spotify"></i></div>
+                                                <span class="app-name">Music</span>
+                                            </div>
+                                            <div class="app-item" data-title="Calculator" data-msg="Quick math computation engine ready.">
+                                                <div class="app-icon" style="background: #e67e22;"><i class="fas fa-calculator"></i></div>
+                                                <span class="app-name">Calc</span>
+                                            </div>
+                                            <div class="app-item" data-title="Lock Phone" data-msg="Locking virtual device..." id="drawerLockPhoneApp">
+                                                <div class="app-icon" style="background: #e74c3c;"><i class="fas fa-lock"></i></div>
+                                                <span class="app-name">Lock</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- App Feedback HUD -->
+                                    <div class="app-feedback-hud" id="appFeedback">
+                                        <i class="fas fa-sparkles" style="color: var(--accent); font-size: 1.2rem;"></i>
+                                        <div style="flex-grow: 1;">
+                                            <strong id="hudTitle" style="color: var(--accent); display: block;">Notification</strong>
+                                            <span id="hudMsg" style="font-size: 0.72rem; color: #ccc;">Process feedback</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fab fa-java" style="color: #b07219;"></i> MainActivity.java</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">package</span> com.shiva.tara;
+
+<span class="keyword">import</span> android.os.Bundle;
+<span class="keyword">import</span> android.widget.ToggleButton;
+<span class="keyword">import</span> androidx.appcompat.app.AppCompatActivity;
+
+<span class="keyword">public class</span> <span class="function">MainActivity</span> <span class="keyword">extends</span> AppCompatActivity {
+
+    <span class="keyword">private</span> ToggleButton aiListenToggle;
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> <span class="function">onCreate</span>(Bundle savedInstanceState) {
+        <span class="keyword">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        aiListenToggle = findViewById(R.id.toggleListen);
+        
+        aiListenToggle.setOnCheckedChangeListener((buttonView, isChecked) -&gt; {
+            <span class="keyword">if</span> (isChecked) {
+                <span class="function">startListening</span>();
+            } <span class="keyword">else</span> {
+                <span class="function">stopListening</span>();
+            }
+        });
+    }
+}
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" id="direct_doctor">
+                    <div class="card-header-flex">
+                        <h4><i class="fas fa-user-md"></i> DIRECT DOCTOR</h4>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="preview"><i class="fas fa-heartbeat"></i> App Portal</button>
+                            <button class="toggle-btn" data-view="code"><i class="fas fa-code"></i> Source Code</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-section preview active">
+                        <p class="description"><strong>Direct Doctor: Healthcare Teleconsultation & Diagnostics Platform</strong></p>
+                        
+                        <div class="dd-card-wrapper">
+                            <div class="dd-bg-backplate"></div>
+
+                            <div class="dd-3d-box">
+                                <img src="direct_doctor_logo.png" alt="Direct Doctor 3D Logo">
+                            </div>
+
+                            <div class="dd-content-body" style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
+                                <h3 style="margin: 0 0 12px 0; color: #fff; border-bottom: none; font-size: 1.8rem; font-weight: 800; letter-spacing: 0.5px; text-align: center; justify-content: center; width: 100%;">                                    
+                                    Direct Doctor
+                                </h3>
+                                <p>
+                                    Seamless 24/7 on-demand medical assistance, real-time prescription synchronization, and patient appointment management platform with end-to-end encryption.
+                                </p>
+                            </div>
+
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 5;">
+                                <span class="tag"><i class="fas fa-shield-alt"></i> HIPAA Compliant</span>
+                                <span class="tag"><i class="fas fa-video"></i> WebRTC Telehealth</span>
+                                <span class="tag"><i class="fas fa-file-medical"></i> Digital Records</span>
+                            </div>
+
+                            <a href="https://github.com/SK6300/Direct-Doctor/releases/download/v1.0/Direct_Doctor.apk" class="btn-dl" target="_blank" style="margin-top: 15px; font-size: 1rem; padding: 12px 24px; position: relative; z-index: 5;">
+                                <i class="fab fa-android" style="font-size: 1.3rem;"></i> Download Direct Doctor APK (34.5 MB)[cite: 6]
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="view-section code">
+                        <div class="vscode-container">
+                            <div class="vscode-header">
+                                <div class="vscode-dots"><div class="vscode-dot red"></div><div class="vscode-dot yellow"></div><div class="vscode-dot green"></div></div>
+                                <div class="vscode-tab"><i class="fab fa-js" style="color: #61dafb;"></i> DirectDoctorApp.js</div>
+                            </div>
+                            <div class="vscode-content">
+<pre><code><span class="keyword">import</span> express <span class="keyword">from</span> <span class="string">'express'</span>;
+<span class="keyword">const</span> app = <span class="function">express</span>();
+
+app.<span class="function">post</span>(<span class="string">'/api/consultation/connect'</span>, <span class="keyword">async</span> (req, res) =&gt; {
+    <span class="keyword">const</span> { patientId, specialty, urgency } = req.body;
+    
+    <span class="keyword">const</span> availableDoctor = <span class="keyword">await</span> DoctorRegistry.<span class="function">findOptimalDoctor</span>({
+        specialty,
+        onDuty: <span class="keyword">true</span>,
+        urgencyLevel: urgency
+    });
+
+    <span class="keyword">if</span> (!availableDoctor) {
+        <span class="keyword">return</span> res.<span class="function">status</span>(<span class="string">503</span>).<span class="function">json</span>({ message: <span class="string">"All doctors busy, queued."</span> });
+    }
+
+    <span class="keyword">const</span> sessionRoom = <span class="keyword">await</span> TelehealthService.<span class="function">createSecureSession</span>(
+        patientId, 
+        availableDoctor.id
+    );
+
+    res.<span class="function">json</span>({ 
+        status: <span class="string">"Connected"</span>, 
+        doctorId: availableDoctor.id, 
+        roomToken: sessionRoom.token 
+    });
+});
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Profile Lightbox
+        const profileImg = document.getElementById('profileImg');
+        const lightbox = document.getElementById('profileLightbox');
+        profileImg.addEventListener('dblclick', () => lightbox.classList.add('active'));
+        lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+
+        // Tab Switching
+        const tabs = document.querySelectorAll('.tab');
+        const cards = document.querySelectorAll('.project-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('mouseenter', () => { 
+                tabs.forEach(t => t.classList.remove('active'));
+                cards.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const targetId = tab.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Toggle Preview / Code
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.project-card');
+                card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                card.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+                const targetView = this.getAttribute('data-view');
+                card.querySelector('.view-section.' + targetView).classList.add('active');
+            });
+        });
+
+        // 3D Model Hover
+        const headerModelContainer = document.querySelector('.header-3d-model');
+        const headerModel = document.getElementById('header-model');
+
+        headerModelContainer.addEventListener('mouseenter', () => {
+            headerModel.setAttribute('auto-rotate', 'true');
+        });
+
+        headerModelContainer.addEventListener('mouseleave', () => {
+            headerModel.removeAttribute('auto-rotate');
+            headerModel.cameraOrbit = "90deg 75deg auto"; 
+        });
+
+        // Netflix Video Carousel
+        const videoThumbnails = document.querySelectorAll('.vid-thumbnail');
+        const mainVideoPlayer = document.getElementById('mainVideoPlayer');
+        const mainVideoSource = mainVideoPlayer.querySelector('source');
+
+        videoThumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                videoThumbnails.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const newSrc = this.getAttribute('data-src');
+                mainVideoSource.setAttribute('src', newSrc);
+                mainVideoPlayer.load(); 
+                mainVideoPlayer.play(); 
+            });
+        });
+
+        // Dynamic Height Adjuster
+        const projectDisplayContainer = document.querySelector('.project-display');
+
+        function adjustDynamicHeight() {
+            requestAnimationFrame(() => {
+                const activeCard = document.querySelector('.project-card.active');
+                if(!activeCard) return;
+
+                const activeSection = activeCard.querySelector('.view-section.active');
+                
+                if(activeCard.id === 'myedits') {
+                    const vidPlayer = document.getElementById('mainVideoPlayer');
+                    const vidContainer = document.querySelector('.video-player-container');
+
+                    if(vidPlayer && vidContainer) {
+                        const vWidth = vidPlayer.videoWidth;
+                        const vHeight = vidPlayer.videoHeight;
+                        
+                        if (vWidth === 0 || vHeight === 0) {
+                            setTimeout(adjustDynamicHeight, 100);
+                            return;
+                        }
+                        
+                        if (vHeight > vWidth) {
+                            vidPlayer.style.maxWidth = '350px'; 
+                            vidContainer.style.maxWidth = '1000px'; 
+                        } else {
+                            vidPlayer.style.maxWidth = '100%';
+                            vidContainer.style.maxWidth = '1000px'; 
+                        }
+
+                        setTimeout(() => {
+                            const currentHeight = vidPlayer.clientHeight;
+                            projectDisplayContainer.style.height = `${currentHeight + 220}px`; 
+                        }, 50); 
+                    }
+                    return;
+                }
+
+                if(activeCard.id === 'direct_doctor') {
+                    projectDisplayContainer.style.height = 'auto';
+                    setTimeout(() => {
+                        const cardWrapper = activeCard.querySelector('.dd-card-wrapper');
+                        if (cardWrapper) {
+                            projectDisplayContainer.style.height = `${cardWrapper.scrollHeight + 140}px`;
+                        }
+                    }, 50);
+                    return;
+                }
+
+                if(activeSection) {
+                    projectDisplayContainer.style.height = 'auto'; 
+                    const contentHeight = activeSection.scrollHeight;
+                    projectDisplayContainer.style.height = `${contentHeight + 150}px`; 
+                }
+            });
+        }
+
+        window.addEventListener('resize', adjustDynamicHeight);
+        const dynamicVidPlayer = document.getElementById('mainVideoPlayer');
+        if(dynamicVidPlayer) dynamicVidPlayer.addEventListener('loadedmetadata', adjustDynamicHeight);
+
+        document.querySelectorAll('.tab').forEach(t => {
+            t.addEventListener('click', () => { setTimeout(adjustDynamicHeight, 50); });
+        });
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => { setTimeout(adjustDynamicHeight, 50); });
+        });
+
+        // Hover Dynamic Background
+        const hoverElements = [
+            { selector: '.profile-pic', bg: 'noise&smooth.jpg', bright: '0.5', size: 'contain', pos: 'center' }, 
+            { selector: '.icon-1 .icon-inner', bg: 'insta_bg.jpg', bright: '0.6', size: 'cover', pos: 'top center' },
+            { selector: '.icon-2 .icon-inner', bg: 'whatsapp_bg.jpg', bright: '0.6', size: 'contain', pos: 'center right' },
+            { selector: '.icon-3 .icon-inner', bg: 'call_bg.jpg', bright: '0.6', size: '60%', pos: 'center' },
+            { selector: '.icon-4 .icon-inner', bg: 'email_bg.jpg', bright: '0.6', size: 'cover', pos: 'bottom' },
+            { selector: '.icon-5 .icon-inner', bg: 'linkedin_bg.jpg', bright: '0.6', size: 'contain', pos: 'left center' },
+            { selector: '.icon-6 .icon-inner', bg: 'github_bg.jpg', bright: '0.6', size: '80%', pos: 'center' }
+        ];
+
+        hoverElements.forEach(item => {
+            const el = document.querySelector(item.selector);
+            if(el) {
+                el.addEventListener('mouseenter', () => {
+                    document.body.style.setProperty('--dynamic-bg', `url('${item.bg}')`);
+                    document.body.style.setProperty('--bg-bright', item.bright);
+                    document.body.style.setProperty('--bg-size', item.size || 'contain');
+                    document.body.style.setProperty('--bg-pos', item.pos || 'center');
+                    document.body.style.setProperty('--bg-opacity', '1'); 
+                });
+                el.addEventListener('mouseleave', () => {
+                    document.body.style.setProperty('--bg-opacity', '0'); 
+                });
+            }
+        });
+
+        // Photoshop Motion Blur Slider
+        const psSlides = document.querySelectorAll('.ps-slide');
+        let currentPsSlide = 0;
+        let isPsAnimating = false; 
+
+        function movePsSlider(direction) {
+            const psSlides = document.querySelectorAll('.ps-slide');
+            if(psSlides.length <= 1 || isPsAnimating) return;
+            isPsAnimating = true;
+
+            const outSlide = psSlides[currentPsSlide];
+
+            if (direction === 'next') {
+                currentPsSlide = (currentPsSlide + 1) % psSlides.length;
+            } else {
+                currentPsSlide = (currentPsSlide - 1 + psSlides.length) % psSlides.length;
+            }
+            const inSlide = psSlides[currentPsSlide];
+
+            psSlides.forEach(slide => { slide.className = 'ps-slide'; });
+
+            if (direction === 'next') {
+                outSlide.classList.add('fade-out-left');
+                inSlide.classList.add('active', 'fade-in-right');
+            } else {
+                outSlide.classList.add('fade-out-right');
+                inSlide.classList.add('active', 'fade-in-left');
+            }
+
+            setTimeout(() => { isPsAnimating = false; }, 500);
+        }
+
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            if (btn.id === 'ps-next') movePsSlider('next');
+            else if (btn.id === 'ps-prev') movePsSlider('prev');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => { setTimeout(adjustDynamicHeight, 300); });
+        window.addEventListener('load', () => { setTimeout(adjustDynamicHeight, 300); });
+
+        // Interactive SPV
+        const spvContainer = document.getElementById('spv-container');
+        if(spvContainer) {
+            spvContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('#load-spv-btn');
+                if(btn) {
+                    spvContainer.innerHTML = `
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--accent); font-weight: bold;">Loading Elements...</div>
+                        <iframe src="PraticlElementals.html" allow="microphone" style="width: 100%; height: 100%; border: none; position: relative; z-index: 10;" title="Particle Sphere"></iframe>
+                    `;
+                    setTimeout(adjustDynamicHeight, 200);
+                }
+            });
+        }
+
+        function resetSpvContainer() {
+            if(spvContainer && spvContainer.querySelector('iframe')) {
+                spvContainer.innerHTML = `
+                    <i class="fas fa-atom" style="font-size: 4rem; color: rgba(0, 255, 204, 0.3); margin-bottom: 20px;"></i>
+                    <button id="load-spv-btn" class="download-float-btn" style="position: relative; bottom: 0; right: 0;">
+                        <i class="fas fa-bolt"></i> Activate Particle Sphere
+                    </button>
+                `;
+            }
+        }
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.getAttribute('data-target') !== 'vscode') resetSpvContainer();
+            });
+        });
+
+        // =========================================================
+        // --- REALISTIC VIRTUAL SMARTPHONE CONTROLLER ENGINE ---
+        // =========================================================
+        const virtualPhone = document.getElementById('interactivePhone');
+        const phoneScreen = document.getElementById('phoneScreen');
+        const lockScreen = document.getElementById('lockScreen');
+        const unlockTrigger = document.getElementById('unlockTrigger');
+        const drawerLockPhoneApp = document.getElementById('drawerLockPhoneApp');
+        const notchToggle = document.getElementById('notchToggle');
+        const pullZone = document.getElementById('topRightPullZone');
+        const controlCenter = document.getElementById('controlCenter');
+        const ccCloseHandle = document.getElementById('ccCloseHandle');
+        const appDrawer = document.getElementById('appDrawer');
+        const drawerTrigger = document.getElementById('drawerTrigger');
+        const drawerCloseHandle = document.getElementById('drawerCloseHandle');
+
+        const feedbackHud = document.getElementById('appFeedback');
+        const hudTitle = document.getElementById('hudTitle');
+        const hudMsg = document.getElementById('hudMsg');
+        let hudTimer = null;
+
+        const tileWifi = document.getElementById('tileWifi');
+        const tileData = document.getElementById('tileData');
+        const toggleRotate = document.getElementById('toggleRotate');
+        const toggleFlight = document.getElementById('toggleFlight');
+        const statusWifi = document.getElementById('statusWifi');
+        const statusRotate = document.getElementById('statusRotate');
+        const statusSim = document.getElementById('statusSim');
+
+        // 1. Clock & Date
+        function syncPhoneClock() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            const timeStr = `${hrs}:${mins}`;
+            
+            const pClock = document.getElementById('phoneClock');
+            const lTime = document.getElementById('lockTimeDisplay');
+            const lDate = document.getElementById('lockDateDisplay');
+            
+            if (pClock) pClock.textContent = timeStr;
+            if (lTime) lTime.textContent = timeStr;
+            if (lDate) {
+                const options = { weekday: 'long', month: 'long', day: 'numeric' };
+                lDate.textContent = now.toLocaleDateString('en-US', options);
+            }
+        }
+        setInterval(syncPhoneClock, 1000);
+        syncPhoneClock();
+
+        // 2. STOP Tilt On Hover
+        if (virtualPhone) {
+            const viewport = virtualPhone.parentElement;
+            
+            viewport.addEventListener('mousemove', (e) => {
+                const phoneRect = virtualPhone.getBoundingClientRect();
+                const isOverPhone = (
+                    e.clientX >= phoneRect.left &&
+                    e.clientX <= phoneRect.right &&
+                    e.clientY >= phoneRect.top &&
+                    e.clientY <= phoneRect.bottom
+                );
+
+                if (isOverPhone) {
+                    virtualPhone.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1.02)';
+                } else {
+                    const rect = viewport.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    const tiltX = (y / (rect.height / 2)) * -10;
+                    const tiltY = (x / (rect.width / 2)) * 10;
+                    virtualPhone.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                }
+            });
+
+            viewport.addEventListener('mouseleave', () => {
+                virtualPhone.style.transform = 'rotateX(8deg) rotateY(-8deg)';
+            });
+        }
+
+        // 3. Unlock Logic (Removes wallpaper blur)
+        function unlockDevice() {
+            lockScreen.classList.add('unlocked');
+            phoneScreen.classList.add('unlocked');
+        }
+
+        function lockDevice() {
+            lockScreen.classList.remove('unlocked');
+            phoneScreen.classList.remove('unlocked');
+            controlCenter.classList.remove('open');
+            phoneScreen.classList.remove('control-open');
+            appDrawer.classList.remove('open');
+            phoneScreen.classList.remove('drawer-open');
+        }
+
+        if (unlockTrigger) unlockTrigger.addEventListener('click', unlockDevice);
+
+        let startLockY = 0;
+        lockScreen.addEventListener('mousedown', (e) => { startLockY = e.clientY; });
+        lockScreen.addEventListener('mouseup', (e) => {
+            if (startLockY - e.clientY > 35) unlockDevice();
+        });
+        lockScreen.addEventListener('touchstart', (e) => { startLockY = e.touches[0].clientY; });
+        lockScreen.addEventListener('touchend', (e) => {
+            if (startLockY - e.changedTouches[0].clientY > 35) unlockDevice();
+        });
+
+        if (drawerLockPhoneApp) {
+            drawerLockPhoneApp.addEventListener('click', (e) => {
+                e.stopPropagation();
+                lockDevice();
+            });
+        }
+
+        // 4. Control Center Open/Close
+        function toggleControlCenter(state) {
+            const shouldOpen = (state !== undefined) ? state : !controlCenter.classList.contains('open');
+            if (shouldOpen) {
+                controlCenter.classList.add('open');
+                phoneScreen.classList.add('control-open');
+                appDrawer.classList.remove('open');
+                phoneScreen.classList.remove('drawer-open');
+            } else {
+                controlCenter.classList.remove('open');
+                phoneScreen.classList.remove('control-open');
+            }
+        }
+
+        if (notchToggle) {
+            notchToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleControlCenter();
+            });
+        }
+
+        let pullStartY = 0;
+        if (pullZone) {
+            pullZone.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleControlCenter(true);
+            });
+            pullZone.addEventListener('mousedown', (e) => { pullStartY = e.clientY; });
+            pullZone.addEventListener('mouseup', (e) => {
+                if (e.clientY - pullStartY > 18) toggleControlCenter(true);
+            });
+            pullZone.addEventListener('touchstart', (e) => { pullStartY = e.touches[0].clientY; });
+            pullZone.addEventListener('touchend', (e) => {
+                if (e.changedTouches[0].clientY - pullStartY > 18) toggleControlCenter(true);
+            });
+        }
+
+        if (ccCloseHandle) {
+            ccCloseHandle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleControlCenter(false);
+            });
+        }
+
+        // 5. Realistic Control Center Toggles State Sync
+        if (tileWifi) {
+            tileWifi.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = tileWifi.classList.toggle('active');
+                tileWifi.querySelector('.tile-sub').textContent = isActive ? 'Connected' : 'Off';
+                statusWifi.style.opacity = isActive ? '1' : '0.2';
+            });
+        }
+
+        if (tileData) {
+            tileData.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = tileData.classList.toggle('active');
+                tileData.querySelector('.tile-sub').textContent = isActive ? 'Jio 5G' : 'Disabled';
+                statusSim.style.opacity = isActive ? '1' : '0.2';
+            });
+        }
+
+        if (toggleRotate) {
+            toggleRotate.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = toggleRotate.classList.toggle('active');
+                statusRotate.style.display = isActive ? 'inline-block' : 'none';
+            });
+        }
+
+        if (toggleFlight) {
+            toggleFlight.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isFlight = toggleFlight.classList.toggle('active');
+                if (isFlight) {
+                    tileWifi.classList.remove('active');
+                    tileWifi.querySelector('.tile-sub').textContent = 'Off';
+                    statusWifi.style.opacity = '0.2';
+                    tileData.classList.remove('active');
+                    tileData.querySelector('.tile-sub').textContent = 'Disabled';
+                    statusSim.style.opacity = '0.2';
+                }
+            });
+        }
+
+        document.querySelectorAll('.cc-mini-toggle').forEach(btn => {
+            if (btn.id !== 'toggleRotate' && btn.id !== 'toggleFlight') {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    btn.classList.toggle('active');
+                });
+            }
+        });
+
+        // 6. DOWN-TO-TOP SWIPE: APP DRAWER CONTROLLER
+        function toggleAppDrawer(state) {
+            const shouldOpen = (state !== undefined) ? state : !appDrawer.classList.contains('open');
+            if (shouldOpen) {
+                appDrawer.classList.add('open');
+                phoneScreen.classList.add('drawer-open');
+                controlCenter.classList.remove('open');
+                phoneScreen.classList.remove('control-open');
+            } else {
+                appDrawer.classList.remove('open');
+                phoneScreen.classList.remove('drawer-open');
+            }
+        }
+
+        if (drawerTrigger) {
+            drawerTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleAppDrawer(true);
+            });
+        }
+
+        let homeStartY = 0;
+        const homeScreen = document.getElementById('homeScreen');
+        if (homeScreen) {
+            homeScreen.addEventListener('mousedown', (e) => { homeStartY = e.clientY; });
+            homeScreen.addEventListener('mouseup', (e) => {
+                if (homeStartY - e.clientY > 30) toggleAppDrawer(true);
+            });
+            homeScreen.addEventListener('touchstart', (e) => { homeStartY = e.touches[0].clientY; });
+            homeScreen.addEventListener('touchend', (e) => {
+                if (homeStartY - e.changedTouches[0].clientY > 30) toggleAppDrawer(true);
+            });
+        }
+
+        if (drawerCloseHandle) {
+            drawerCloseHandle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleAppDrawer(false);
+            });
+        }
+
+        let drawerStartY = 0;
+        if (appDrawer) {
+            appDrawer.addEventListener('mousedown', (e) => { drawerStartY = e.clientY; });
+            appDrawer.addEventListener('mouseup', (e) => {
+                if (e.clientY - drawerStartY > 45) toggleAppDrawer(false);
+            });
+            appDrawer.addEventListener('touchstart', (e) => { drawerStartY = e.touches[0].clientY; });
+            appDrawer.addEventListener('touchend', (e) => {
+                if (e.changedTouches[0].clientY - drawerStartY > 45) toggleAppDrawer(false);
+            });
+        }
+
+        // Tap outside drawer or control panel to close
+        phoneScreen.addEventListener('click', (e) => {
+            if (!controlCenter.contains(e.target) && e.target !== notchToggle && e.target !== pullZone) {
+                toggleControlCenter(false);
+            }
+            if (!appDrawer.contains(e.target) && !drawerTrigger.contains(e.target)) {
+                toggleAppDrawer(false);
+            }
+        });
+
+        // 7. Interactive App Feedback
+        document.querySelectorAll('.app-item').forEach(app => {
+            app.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (app.id === 'drawerLockPhoneApp') return;
+
+                const title = app.getAttribute('data-title');
+                const msg = app.getAttribute('data-msg');
+                
+                hudTitle.textContent = title;
+                hudMsg.textContent = msg;
+                
+                feedbackHud.classList.add('active');
+                clearTimeout(hudTimer);
+                hudTimer = setTimeout(() => {
+                    feedbackHud.classList.remove('active');
+                }, 2800);
+            });
+        });
+    </script>
+</body>
+</html>
